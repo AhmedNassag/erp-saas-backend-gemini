@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "laravel/framework": "^12.0",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.10.1",
         "nwidart/laravel-modules": "^12.0",
         "spatie/laravel-multitenancy": "^4.1"
@@ -26,10 +27,17 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
+            
+            "Modules\\Landlord\\": "Modules/Landlord/app/",
+            "Modules\\Landlord\\Database\\Seeders\\": "Modules/Landlord/database/seeders/",
+            
             "Modules\\Core\\": "Modules/Core/app/",
             "Modules\\Core\\Database\\Seeders\\": "Modules/Core/database/seeders/",
-            "Modules\\Landlord\\": "Modules/Landlord/app/",
-            "Modules\\Landlord\\Database\\Seeders\\": "Modules/Landlord/database/seeders/"
+            "Modules\\Core\\Country\\": "Modules/Core/Country/",
+            "Modules\\Core\\City\\": "Modules/Core/City/",
+            "Modules\\Core\\Area\\": "Modules/Core/Area/",
+            "Modules\\Core\\Branch\\": "Modules/Core/Branch/",
+            "Modules\\Core\\RoleAndPermission\\": "Modules/Core/RoleAndPermission/"
         }
     },
     "autoload-dev": {
