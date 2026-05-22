@@ -1,7 +1,7 @@
 <?php
 
-@include('Modules/Core/Country/routes/api.php');
-@include('Modules/Core/City/routes/api.php');
-@include('Modules/Core/Area/routes/api.php');
-@include('Modules/Core/Branch/routes/api.php');
-    
+require __DIR__ . '/Country/CountryRoutes.php';
+require __DIR__ . '/City/CityRoutes.php';
+require __DIR__ . '/Area/AreaRoutes.php';
+require __DIR__ . '/Branch/BranchRoutes.php';
+require __DIR__ . '/RoleAndPermission/RoleAndPermissionRoutes.php';

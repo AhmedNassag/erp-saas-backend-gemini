@@ -33,12 +33,5 @@ class CreateTenantDatabaseListener
             '--path' => 'database/migrations/tenant', 
             '--force' => true,
         ]);
-
-        // 4. تشغيل الـ Seeders الخاصة بالـ Tenants جوه قاعدة البيانات الجديدة
-        Artisan::call('db:seed', [
-            '--database' => 'tenant',
-            '--class' => 'TenantDatabaseSeeder',
-            '--force' => true,
-        ]);
     }
 }

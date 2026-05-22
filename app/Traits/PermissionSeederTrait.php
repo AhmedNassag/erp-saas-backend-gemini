@@ -2,7 +2,7 @@
 
 namespace App\Traits;
 
-use Modules\Core\RoleAndPermission\App\Models\Permission;
+use Modules\Core\Models\RoleAndPermission\Permission;
 use Illuminate\Support\Facades\Log;
 
 trait PermissionSeederTrait

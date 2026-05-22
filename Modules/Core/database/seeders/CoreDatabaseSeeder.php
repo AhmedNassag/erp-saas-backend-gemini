@@ -3,6 +3,11 @@
 namespace Modules\Core\Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Modules\Core\Database\Seeders\RoleAndPermission\RoleAndPermissionDatabaseSeeder;
+use Modules\Core\Database\Seeders\Country\CountryDatabaseSeeder;
+use Modules\Core\Database\Seeders\City\CityDatabaseSeeder;
+use Modules\Core\Database\Seeders\Area\AreaDatabaseSeeder;
+use Modules\Core\Database\Seeders\Branch\BranchDatabaseSeeder;
 
 class CoreDatabaseSeeder extends Seeder
 {
@@ -12,10 +17,11 @@ class CoreDatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            CountrySeeder::class,
-            CitySeeder::class,
-            AreaSeeder::class,
-            BranchSeeder::class,
+            RoleAndPermissionDatabaseSeeder::class,
+            CountryDatabaseSeeder::class,
+            CityDatabaseSeeder::class,
+            AreaDatabaseSeeder::class,
+            BranchDatabaseSeeder::class,
         ]);
     }
 }

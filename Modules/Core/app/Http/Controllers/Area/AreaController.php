@@ -1,17 +1,14 @@
 <?php
 
-namespace Modules\Core\App\Http\Controllers\Area;
+namespace Modules\Core\Http\Controllers\Area;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Modules\Core\App\Http\Requests\StoreRequest;
-use Modules\Core\App\Http\Requests\UpdateRequest;
-use Modules\Core\App\Models\Area;
-use Modules\Core\App\Repositories\AreaInterface;
-use Modules\Core\App\Filters\AreaFilter;
-
+use Modules\Core\Http\Requests\Area\StoreRequest;
+use Modules\Core\Http\Requests\Area\UpdateRequest;
+use Modules\Core\Models\Area\Area;
+use Modules\Core\Repositories\Area\AreaInterface;
+use Modules\Core\Filters\Area\AreaFilter;
 class AreaController extends Controller
 {
     protected $area;
@@ -19,43 +16,49 @@ class AreaController extends Controller
     public function __construct(AreaInterface $area)
     {
         $this->area = $area;
+
+        $this->middleware('permission:read-area', ['only' => ['index']]);
+        $this->middleware('permission:show-area', ['only' => ['show']]);
+        $this->middleware('permission:create-area', ['only' => ['store']]);
+        $this->middleware('permission:update-area', ['only' => ['update']]);
+        $this->middleware('permission:delete-area', ['only' => ['destroy']]);
     }
 
+    /**
+     * Display a listing of the resource.
+     */
 
-
-    /** Display a listing of the resource **/
     public function index(Request $request, AreaFilter $filter)
     {
-        return $this->area->index($request, $filter);
+        return $this->area->index($request,$filter);
     }
 
+    /**
+     * Show the form for creating a new resource.
+     */
 
-
-    /** Show the form for creating a new resource **/
     public function store(StoreRequest $request)
     {
         return $this->area->store($request);
     }
 
-
-
-    /** Show the specified resource **/
+    /**
+     * Show the specified resource.
+     */
     public function show(Area $area)
     {
         return $this->area->show($area);
     }
 
 
-
-    /** Show the form for editing the specified resource **/
-    public function update(Area $area, UpdateRequest $request)
+    public function update(Area $area , UpdateRequest $request)
     {
-        return $this->area->update($area, $request);
+        return $this->area->update($area , $request);
     }
 
-
-
-    /** Remove the specified resource from storage **/
+    /**
+     * Remove the specified resource from storage.
+     */
     public function destroy(Area $area)
     {
         return $this->area->destroy($area);
