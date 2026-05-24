@@ -3,44 +3,39 @@
 namespace Modules\Core\Providers;
 
 use Nwidart\Modules\Support\ModuleServiceProvider;
-use Illuminate\Console\Scheduling\Schedule;
+use Modules\Core\Repositories\Country\CountryInterface;
+use Modules\Core\Repositories\Country\CountryRepository;
+use Modules\Core\Repositories\City\CityInterface;
+use Modules\Core\Repositories\City\CityRepository;
+use Modules\Core\Repositories\Area\AreaInterface;
+use Modules\Core\Repositories\Area\AreaRepository;
+use Modules\Core\Repositories\Branch\BranchInterface;
+use Modules\Core\Repositories\Branch\BranchRepository;
+use Modules\Core\Repositories\RoleAndPermission\RoleInterface;
+use Modules\Core\Repositories\RoleAndPermission\RoleRepository;
+use Modules\Core\Repositories\RoleAndPermission\PermissionInterface;
+use Modules\Core\Repositories\RoleAndPermission\PermissionRepository;
 
 class CoreServiceProvider extends ModuleServiceProvider
 {
-    /**
-     * The name of the module.
-     */
     protected string $name = 'Core';
-
-    /**
-     * The lowercase version of the module name.
-     */
     protected string $nameLower = 'core';
 
-    /**
-     * Command classes to register.
-     *
-     * @var string[]
-     */
-    // protected array $commands = [];
-
-    /**
-     * Provider classes to register.
-     *
-     * @var string[]
-     */
     protected array $providers = [
         EventServiceProvider::class,
         RouteServiceProvider::class,
     ];
 
-    /**
-     * Define module schedules.
-     * 
-     * @param $schedule
-     */
-    // protected function configureSchedules(Schedule $schedule): void
-    // {
-    //     $schedule->command('inspire')->hourly();
-    // }
+    public function register(): void
+    {
+        parent::register();
+
+        // Bind Repository Interfaces to their Implementations
+        $this->app->bind(CountryInterface::class,    CountryRepository::class);
+        $this->app->bind(CityInterface::class,       CityRepository::class);
+        $this->app->bind(AreaInterface::class,       AreaRepository::class);
+        $this->app->bind(BranchInterface::class,     BranchRepository::class);
+        $this->app->bind(RoleInterface::class,       RoleRepository::class);
+        $this->app->bind(PermissionInterface::class, PermissionRepository::class);
+    }
 }

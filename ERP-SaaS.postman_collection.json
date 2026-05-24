@@ -1,0 +1,454 @@
+{
+  "info": {
+    "name": "ERP SaaS - Backend API",
+    "_postman_id": "erp-saas-collection-v1",
+    "description": "Full API collection for ERP SaaS Laravel backend.\n\n**Base URLs:**\n- Central API: `http://erp.test:8000`\n- Tenant API: `http://alpha.erp.test:8000`\n\n**Auth:**\n- Super Admin routes use `Bearer {{super_admin_token}}`\n- Tenant routes use `Bearer {{tenant_token}}`",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url",          "value": "http://erp.test:8000",       "type": "string" },
+    { "key": "tenant_url",        "value": "http://alpha.erp.test:8000", "type": "string" },
+    { "key": "super_admin_token", "value": "",                           "type": "string" },
+    { "key": "tenant_token",      "value": "",                           "type": "string" }
+  ],
+  "item": [
+
+    {
+      "name": "🏰 Super Admin — Auth",
+      "item": [
+        {
+          "name": "Login (Email + Password)",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { pm.collectionVariables.set('super_admin_token', pm.response.json().token); }"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/admin/auth/login", "host": ["{{base_url}}"], "path": ["api","admin","auth","login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ahmednassag@gmail.com\",\n  \"password\": \"password\"\n}" }
+          }
+        },
+        {
+          "name": "Send Email OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/admin/auth/email-otp/send", "host": ["{{base_url}}"], "path": ["api","admin","auth","email-otp","send"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ahmednassag@gmail.com\"\n}" }
+          }
+        },
+        {
+          "name": "Verify Email OTP",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { pm.collectionVariables.set('super_admin_token', pm.response.json().token); }"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/admin/auth/email-otp/verify", "host": ["{{base_url}}"], "path": ["api","admin","auth","email-otp","verify"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"ahmednassag@gmail.com\",\n  \"otp\": \"123456\"\n}" }
+          }
+        },
+        {
+          "name": "Send Mobile OTP",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/admin/auth/mobile-otp/send", "host": ["{{base_url}}"], "path": ["api","admin","auth","mobile-otp","send"] },
+            "body": { "mode": "raw", "raw": "{\n  \"mobile\": \"01016856433\"\n}" }
+          }
+        },
+        {
+          "name": "Verify Mobile OTP",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { pm.collectionVariables.set('super_admin_token', pm.response.json().token); }"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{base_url}}/api/admin/auth/mobile-otp/verify", "host": ["{{base_url}}"], "path": ["api","admin","auth","mobile-otp","verify"] },
+            "body": { "mode": "raw", "raw": "{\n  \"mobile\": \"01016856433\",\n  \"otp\": \"123456\"\n}" }
+          }
+        },
+        {
+          "name": "Me (Get Profile)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{super_admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/auth/me", "host": ["{{base_url}}"], "path": ["api","admin","auth","me"] }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{super_admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/auth/logout", "host": ["{{base_url}}"], "path": ["api","admin","auth","logout"] }
+          }
+        },
+        {
+          "name": "Logout All Devices",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{super_admin_token}}" }],
+            "url": { "raw": "{{base_url}}/api/admin/auth/logout-all", "host": ["{{base_url}}"], "path": ["api","admin","auth","logout-all"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏢 Tenant — Auth",
+      "item": [
+        {
+          "name": "Login (Email + Password)",
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) { pm.collectionVariables.set('tenant_token', pm.response.json().token); }"], "type": "text/javascript" } }],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/login", "host": ["{{tenant_url}}"], "path": ["api","login"] },
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@alpha.com\",\n  \"password\": \"password\"\n}" }
+          }
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/logout", "host": ["{{tenant_url}}"], "path": ["api","logout"] }
+          }
+        },
+        {
+          "name": "Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/dashboard", "host": ["{{tenant_url}}"], "path": ["api","dashboard"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🌍 Core — Countries",
+      "item": [
+        {
+          "name": "List Countries",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/country?per_page=15", "host": ["{{tenant_url}}"], "path": ["api","v1","core","country"], "query": [{ "key": "per_page", "value": "15" }, { "key": "search", "value": "", "disabled": true }] }
+          }
+        },
+        {
+          "name": "Create Country",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/country", "host": ["{{tenant_url}}"], "path": ["api","v1","core","country"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"مصر\", \"en\": \"Egypt\"},\n  \"status\": 1\n}" }
+          }
+        },
+        {
+          "name": "Show Country",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/country/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","country","1"] }
+          }
+        },
+        {
+          "name": "Update Country",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/country/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","country","1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"مصر\", \"en\": \"Egypt\"},\n  \"status\": 1\n}" }
+          }
+        },
+        {
+          "name": "Delete Country",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/country/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","country","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏙️ Core — Cities",
+      "item": [
+        {
+          "name": "List Cities",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/city?per_page=15", "host": ["{{tenant_url}}"], "path": ["api","v1","core","city"], "query": [{ "key": "per_page", "value": "15" }, { "key": "country_id", "value": "", "disabled": true }] }
+          }
+        },
+        {
+          "name": "Create City",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/city", "host": ["{{tenant_url}}"], "path": ["api","v1","core","city"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"القاهرة\", \"en\": \"Cairo\"},\n  \"country_id\": 1,\n  \"status\": 1\n}" }
+          }
+        },
+        {
+          "name": "Show City",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/city/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","city","1"] }
+          }
+        },
+        {
+          "name": "Update City",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/city/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","city","1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"القاهرة\", \"en\": \"Cairo\"},\n  \"country_id\": 1,\n  \"status\": 1\n}" }
+          }
+        },
+        {
+          "name": "Delete City",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/city/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","city","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "📍 Core — Areas",
+      "item": [
+        {
+          "name": "List Areas",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/area?per_page=15", "host": ["{{tenant_url}}"], "path": ["api","v1","core","area"], "query": [{ "key": "per_page", "value": "15" }, { "key": "city_id", "value": "", "disabled": true }] }
+          }
+        },
+        {
+          "name": "Create Area",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/area", "host": ["{{tenant_url}}"], "path": ["api","v1","core","area"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"مدينة نصر\", \"en\": \"Nasr City\"},\n  \"city_id\": 1,\n  \"status\": 1\n}" }
+          }
+        },
+        {
+          "name": "Show Area",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/area/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","area","1"] }
+          }
+        },
+        {
+          "name": "Update Area",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/area/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","area","1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"مدينة نصر\", \"en\": \"Nasr City\"},\n  \"city_id\": 1,\n  \"status\": 1\n}" }
+          }
+        },
+        {
+          "name": "Delete Area",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/area/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","area","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏪 Core — Branches",
+      "item": [
+        {
+          "name": "List Branches",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/branch?per_page=15", "host": ["{{tenant_url}}"], "path": ["api","v1","core","branch"], "query": [{ "key": "per_page", "value": "15" }, { "key": "area_id", "value": "", "disabled": true }] }
+          }
+        },
+        {
+          "name": "Create Branch",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/branch", "host": ["{{tenant_url}}"], "path": ["api","v1","core","branch"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"الفرع الرئيسي\", \"en\": \"Main Branch\"},\n  \"code\": \"BR-001\",\n  \"mobile\": \"01016856433\",\n  \"address\": \"123 Main St\",\n  \"area_id\": 1,\n  \"status\": 1\n}" }
+          }
+        },
+        {
+          "name": "Show Branch",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/branch/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","branch","1"] }
+          }
+        },
+        {
+          "name": "Update Branch",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/branch/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","branch","1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"الفرع الرئيسي\", \"en\": \"Main Branch\"},\n  \"code\": \"BR-001\",\n  \"status\": 1\n}" }
+          }
+        },
+        {
+          "name": "Delete Branch",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/branch/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","branch","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🔐 Core — Roles",
+      "item": [
+        {
+          "name": "List Roles",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/roles?per_page=15", "host": ["{{tenant_url}}"], "path": ["api","v1","core","roles"], "query": [{ "key": "per_page", "value": "15" }] }
+          }
+        },
+        {
+          "name": "Create Role",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/roles", "host": ["{{tenant_url}}"], "path": ["api","v1","core","roles"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"مدير\", \"en\": \"Manager\"},\n  \"permission_ids\": [1, 2, 3]\n}" }
+          }
+        },
+        {
+          "name": "Show Role",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/roles/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","roles","1"] }
+          }
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }, { "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/roles/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","roles","1"] },
+            "body": { "mode": "raw", "raw": "{\n  \"name\": {\"ar\": \"مدير\", \"en\": \"Manager\"},\n  \"permission_ids\": [1, 2, 3, 4]\n}" }
+          }
+        },
+        {
+          "name": "Delete Role",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/roles/1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","roles","1"] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🔑 Core — Permissions",
+      "item": [
+        {
+          "name": "List Permissions",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Accept", "value": "application/json" }, { "key": "Authorization", "value": "Bearer {{tenant_token}}" }],
+            "url": { "raw": "{{tenant_url}}/api/v1/core/permissions?per_page=-1", "host": ["{{tenant_url}}"], "path": ["api","v1","core","permissions"], "query": [{ "key": "per_page", "value": "-1" }, { "key": "module", "value": "Core", "disabled": true }] }
+          }
+        }
+      ]
+    },
+
+    {
+      "name": "🏠 Landlord — Portfolio (Web)",
+      "item": [
+        {
+          "name": "Home Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/", "host": ["{{base_url}}"], "path": [""] }
+          }
+        },
+        {
+          "name": "About Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/about", "host": ["{{base_url}}"], "path": ["about"] }
+          }
+        },
+        {
+          "name": "Pricing Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/pricing", "host": ["{{base_url}}"], "path": ["pricing"] }
+          }
+        },
+        {
+          "name": "Contact Page",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/contact", "host": ["{{base_url}}"], "path": ["contact"] }
+          }
+        },
+        {
+          "name": "Subscribe Form (Package 1)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/subscribe/1", "host": ["{{base_url}}"], "path": ["subscribe","1"] }
+          }
+        },
+        {
+          "name": "Process Checkout",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+            "url": { "raw": "{{base_url}}/subscribe/1/checkout", "host": ["{{base_url}}"], "path": ["subscribe","1","checkout"] },
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                { "key": "company_name",    "value": "شركة بيتا" },
+                { "key": "subdomain",       "value": "beta" },
+                { "key": "admin_name",      "value": "Ahmed Ali" },
+                { "key": "admin_email",     "value": "admin@beta.com" },
+                { "key": "admin_password",  "value": "password123" },
+                { "key": "_token",          "value": "{{csrf_token}}" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Admin Dashboard (Web)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/admin/dashboard", "host": ["{{base_url}}"], "path": ["admin","dashboard"] }
+          }
+        }
+      ]
+    }
+
+  ]
+}

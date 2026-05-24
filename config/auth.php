@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\SuperAdmin;
 
 return [
 
@@ -43,9 +44,16 @@ return [
             'provider' => 'users',
         ],
 
+        // Guard للـ Super Admin (صاحب المشروع) — يقرأ من landlord DB
+        'super_admin' => [
+            'driver' => 'sanctum',
+            'provider' => 'super_admins',
+        ],
+
+        // Guard للـ Tenant Users (موظفي الشركات المشتركة) — يقرأ من tenant DB
         'tenant' => [
-            'driver' => 'session',
-            'provider' => 'tenant_users', // هنعرّف الـ provider ده في السطر اللي تحته
+            'driver' => 'sanctum',
+            'provider' => 'tenant_users',
         ],
     ],
 
@@ -72,9 +80,16 @@ return [
             'model' => env('AUTH_MODEL', User::class),
         ],
 
+        // Provider للـ Super Admin — يقرأ من landlord DB
+        'super_admins' => [
+            'driver' => 'eloquent',
+            'model' => SuperAdmin::class,
+        ],
+
+        // Provider للـ Tenant Users — يقرأ من tenant DB (يتغير ديناميكياً بالـ middleware)
         'tenant_users' => [
             'driver' => 'eloquent',
-            'model' => App\Models\User::class, // تأكد إن الموديل ده بيورث من TenantBaseModel عشان يقرا من داتا بيز العميل
+            'model' => App\Models\User::class,
         ],
     ],
 

@@ -7,10 +7,6 @@ use Illuminate\Support\Facades\Artisan;
 
 class CreateTenantDatabaseListener
 {
-    /**
-     * تشغيل معالجة إنشاء قاعدة البيانات للعميل.
-     * باصينا الـ $tenant مباشرة بدل الـ Event عشان نضمن الكود 100%
-     */
     public function handle($tenant): void
     {
         $dbName = $tenant->database;
@@ -19,19 +15,27 @@ class CreateTenantDatabaseListener
             return;
         }
 
-        // 1. خلق قاعدة البيانات الجديدة للعميل لو مش موجودة
+        // 1. إنشاء قاعدة البيانات الجديدة للعميل
         DB::statement("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
 
-        // 2. تغيير اتصال الـ tenant ديناميكياً ليشير للقاعدة الجديدة
+        // 2. تغيير اتصال الـ tenant ديناميكياً
         config(['database.connections.tenant.database' => $dbName]);
         DB::purge('tenant');
         DB::reconnect('tenant');
 
-        // 3. تشغيل الـ Migrations الخاصة بالـ Tenants جوه قاعدة البيانات الجديدة
+        // 3. تشغيل كل tenant migrations من مجلد واحد
+        //    (users + countries + cities + areas + branches + permissions + media)
         Artisan::call('migrate', [
             '--database' => 'tenant',
-            '--path' => 'database/migrations/tenant', 
-            '--force' => true,
+            '--path'     => 'database/migrations/tenant',
+            '--force'    => true,
+        ]);
+
+        // 4. تشغيل الـ Seeders الخاصة بالـ Tenant
+        Artisan::call('db:seed', [
+            '--database' => 'tenant',
+            '--class'    => \Database\Seeders\TenantDatabaseSeeder::class,
+            '--force'    => true,
         ]);
     }
 }

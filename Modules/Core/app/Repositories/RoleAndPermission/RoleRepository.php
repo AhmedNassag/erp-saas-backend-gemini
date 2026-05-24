@@ -1,12 +1,11 @@
-<?php
+﻿<?php
 
 namespace Modules\Core\Repositories\RoleAndPermission;
 
 use App\Http\Responses\ApiResponse;
 use App\Traits\API;
 use App\Models\User;
-use App\Traits\AdditionalDataTrait;
-use App\Repositories\Dashboard\BaseRepository;
+use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Modules\Core\Models\RoleAndPermission\Role;
@@ -16,7 +15,6 @@ use Modules\Core\Resources\RoleAndPermission\RolesResource;
 
 class RoleRepository extends BaseRepository implements RoleInterface
 {
-    use AdditionalDataTrait;
 
     public function getModel()
     {

@@ -1,10 +1,10 @@
-<?php
+﻿<?php
 
 namespace Modules\Core\Repositories\Area;
 
 use App\Http\Responses\ApiResponse;
 use App\Traits\API;
-use App\Repositories\Dashboard\BaseRepository;
+use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Modules\Core\Models\Area\Area;

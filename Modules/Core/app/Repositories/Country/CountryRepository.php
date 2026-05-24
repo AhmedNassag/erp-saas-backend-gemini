@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace Modules\Core\Repositories\Country;
 
@@ -6,7 +6,7 @@ use App\Http\Responses\ApiResponse;
 use App\Traits\API;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Repositories\Dashboard\BaseRepository;
+use App\Repositories\BaseRepository;
 use Modules\Core\Models\Country\Country;
 use Modules\Core\Repositories\Country\CountryInterface;
 use Modules\Core\Resources\Country\CountryResource;

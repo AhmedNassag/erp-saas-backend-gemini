@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace Modules\Core\Repositories\RoleAndPermission;
 
@@ -7,7 +7,7 @@ use App\Traits\API;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Repositories\Dashboard\BaseRepository;
+use App\Repositories\BaseRepository;
 use Modules\Core\Models\RoleAndPermission\Permission;
 use Modules\Core\Repositories\RoleAndPermission\PermissionInterface;
 use Modules\Core\Resources\RoleAndPermission\PermissionsResource;
