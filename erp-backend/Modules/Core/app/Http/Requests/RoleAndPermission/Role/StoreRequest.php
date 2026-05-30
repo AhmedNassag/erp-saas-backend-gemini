@@ -11,16 +11,11 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
-        $roles = [] ;
-
-        foreach (config('myConfig.langs') as $lang) {
-            $roles ['name.'.$lang] = 'required|string|min:5|unique:roles,name->'.$lang.',NULL,id';
-        }
-
-        $roles = array_merge($roles, [
+        $roles = [
+            'name'             => 'required|string|min:3|unique:roles,name,NULL,id,deleted_at,NULL',
             'permission_ids'   => 'required|array',
-            'permission_ids.*' => 'required|exists:permissions,id',
-        ]);
+            // 'permission_ids.*' => 'required|exists:permissions,id',
+        ];
 
         return $roles;
     }
@@ -33,16 +28,18 @@ class StoreRequest extends FormRequest
      */
     public function messages()
     {
-        return [
+        $messages = [
             'name.required'             => trans('validation.required'),
             'name.string'               => trans('validation.string'),
-            'name.min'                  => trans('validation.min.string', ['min' => 5]),
+            'name.min'                  => trans('validation.min'),
             'name.unique'               => trans('validation.unique'),
             'permission_ids.required'   => trans('validation.required'),
             'permission_ids.array'      => trans('validation.array'),
             'permission_ids.*.required' => trans('validation.required'),
             'permission_ids.*.exists'   => trans('validation.exists'),
         ];
+
+        return $messages;
     }
 
     /**

@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Core\Http\Requests\Country\StoreRequest;
 use Modules\Core\Http\Requests\Country\UpdateRequest;
+use Modules\Core\Http\Requests\Country\ChangeStatusRequest;
 use Modules\Core\Models\Country\Country;
+use Modules\Core\Filters\Country\CountryFilter;
 use Modules\Core\Repositories\Country\CountryInterface;
 
 class CountryController extends Controller
@@ -17,11 +19,12 @@ class CountryController extends Controller
     {
         $this->country = $country;
         
-        $this->middleware('permission:read-country', ['only' => ['index']]);
-        $this->middleware('permission:show-country', ['only' => ['show']]);
-        $this->middleware('permission:create-country', ['only' => ['store']]);
-        $this->middleware('permission:update-country', ['only' => ['update']]);
-        $this->middleware('permission:delete-country', ['only' => ['destroy']]);
+        $this->middleware('permission:read-country,tenant', ['only' => ['index']]);
+        $this->middleware('permission:show-country,tenant', ['only' => ['show']]);
+        $this->middleware('permission:create-country,tenant', ['only' => ['store']]);
+        $this->middleware('permission:update-country,tenant', ['only' => ['update']]);
+        $this->middleware('permission:delete-country,tenant', ['only' => ['destroy']]);
+        $this->middleware('permission:changeStatus-country,tenant', ['only' => ['changeStatus']]);
     }
 
 
@@ -29,9 +32,9 @@ class CountryController extends Controller
     /**
      * Display a listing of the resource.
     */
-    public function index(Request $request)
+    public function index(Request $request, CountryFilter $filter)
     {
-        return $this->country->index($request);
+        return $this->country->index($request, $filter);
     }
 
 
@@ -49,9 +52,9 @@ class CountryController extends Controller
     /**
      * Show the specified resource.
     */
-    public function show(Country $country)
+    public function show($id)
     {
-        return $this->country->show($country);
+        return $this->country->show($id);
     }
 
 
@@ -59,18 +62,25 @@ class CountryController extends Controller
     /**
      * Show the form for editing the specified resource.
     */
-    public function update(Country $country, UpdateRequest $request)
+    public function update($id, UpdateRequest $request)
     {
-        return $this->country->update($country, $request);
+        return $this->country->update($id, $request);
     }
 
 
     
     /**
      * Remove the specified resource from storage.
-    */
-    public function destroy(Country $country)
+     */
+    public function destroy($id)
     {
-        return $this->country->destroy($country);
+        return $this->country->destroy($id);
+    }
+
+
+
+    public function changeStatus($id, ChangeStatusRequest $request)
+    {
+        return $this->country->changeStatus($id, $request);
     }
 }

@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Core\Http\Requests\Branch\StoreRequest;
 use Modules\Core\Http\Requests\Branch\UpdateRequest;
-use Modules\Core\Models\Branch\Branch;
+use Modules\Core\Http\Requests\Branch\ChangeStatusRequest;
 use Modules\Core\Repositories\Branch\BranchInterface;
+use Modules\Core\Filters\Branch\BranchFilter;
+use Modules\Core\Models\Branch\Branch;
 
 class BranchController extends Controller
 {
@@ -17,11 +19,12 @@ class BranchController extends Controller
     {
         $this->branch = $branch;
         
-        $this->middleware('permission:read-branch', ['only' => ['index']]);
-        $this->middleware('permission:show-branch', ['only' => ['show']]);
-        $this->middleware('permission:create-branch', ['only' => ['store']]);
-        $this->middleware('permission:update-branch', ['only' => ['update']]);
-        $this->middleware('permission:delete-branch', ['only' => ['destroy']]);
+        $this->middleware('permission:read-branch,tenant', ['only' => ['index']]);
+        $this->middleware('permission:show-branch,tenant', ['only' => ['show']]);
+        $this->middleware('permission:create-branch,tenant', ['only' => ['store']]);
+        $this->middleware('permission:update-branch,tenant', ['only' => ['update']]);
+        $this->middleware('permission:delete-branch,tenant', ['only' => ['destroy']]);
+        $this->middleware('permission:changeStatus-branch,tenant', ['only' => ['changeStatus']]);
     }
 
 
@@ -29,9 +32,9 @@ class BranchController extends Controller
     /**
      * Display a listing of the resource.
     */
-    public function index(Request $request)
+    public function index(Request $request, BranchFilter $filter)
     {
-        return $this->branch->index($request);
+        return $this->branch->index($request, $filter);
     }
 
 
@@ -49,9 +52,9 @@ class BranchController extends Controller
     /**
      * Show the specified resource.
     */
-    public function show(Branch $branch)
+    public function show($id)
     {
-        return $this->branch->show($branch);
+        return $this->branch->show($id);
     }
 
 
@@ -59,9 +62,9 @@ class BranchController extends Controller
     /**
      * Show the form for editing the specified resource.
     */
-    public function update(Branch $branch, UpdateRequest $request)
+    public function update($id, UpdateRequest $request)
     {
-        return $this->branch->update($branch, $request);
+        return $this->branch->update($id, $request);
     }
 
 
@@ -69,8 +72,15 @@ class BranchController extends Controller
     /**
      * Remove the specified resource from storage.
     */
-    public function destroy(Branch $branch)
+    public function destroy($id)
     {
-        return $this->branch->destroy($branch);
+        return $this->branch->destroy($id);
+    }
+
+
+
+    public function changeStatus($id, ChangeStatusRequest $request)
+    {
+        return $this->branch->changeStatus($id, $request);
     }
 }

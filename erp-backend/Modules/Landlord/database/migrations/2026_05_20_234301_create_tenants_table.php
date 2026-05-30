@@ -20,8 +20,7 @@ return new class extends Migration
             $blueprint->foreignId('package_id')->constrained('packages')->onDelete('restrict');
             // تفاصيل الاشتراك
             $blueprint->timestamp('subscription_ends_at')->nullable(); // تاريخ انتهاء الاشتراك
-            $blueprint->enum('status', ['active', 'suspended', 'expired'])->default('active'); // حالة الحساب
-            
+            $blueprint->enum('status', ['pending', 'active', 'suspended', 'expired'])->default('pending'); // حالة الحساب
             $blueprint->timestamps();
         });
     }

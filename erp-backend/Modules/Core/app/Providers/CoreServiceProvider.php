@@ -11,10 +11,14 @@ use Modules\Core\Repositories\Area\AreaInterface;
 use Modules\Core\Repositories\Area\AreaRepository;
 use Modules\Core\Repositories\Branch\BranchInterface;
 use Modules\Core\Repositories\Branch\BranchRepository;
+use Modules\Core\Repositories\Department\DepartmentInterface;
+use Modules\Core\Repositories\Department\DepartmentRepository;
 use Modules\Core\Repositories\RoleAndPermission\RoleInterface;
 use Modules\Core\Repositories\RoleAndPermission\RoleRepository;
 use Modules\Core\Repositories\RoleAndPermission\PermissionInterface;
 use Modules\Core\Repositories\RoleAndPermission\PermissionRepository;
+use Modules\Core\Repositories\User\UserInterface;
+use Modules\Core\Repositories\User\UserRepository;
 
 class CoreServiceProvider extends ModuleServiceProvider
 {
@@ -35,7 +39,9 @@ class CoreServiceProvider extends ModuleServiceProvider
         $this->app->bind(CityInterface::class,       CityRepository::class);
         $this->app->bind(AreaInterface::class,       AreaRepository::class);
         $this->app->bind(BranchInterface::class,     BranchRepository::class);
-        $this->app->bind(RoleInterface::class,       RoleRepository::class);
+        $this->app->bind(DepartmentInterface::class, DepartmentRepository::class);
         $this->app->bind(PermissionInterface::class, PermissionRepository::class);
+        $this->app->bind(RoleInterface::class,       RoleRepository::class);
+        $this->app->bind(UserInterface::class,       UserRepository::class);
     }
 }

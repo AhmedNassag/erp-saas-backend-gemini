@@ -2,18 +2,19 @@
 
 namespace Modules\Core\Models\Branch;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TenantBaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Translatable\HasTranslations;
 use Laravel\Scout\Searchable;
 use App\Traits\ActivityLogTrait;
 use Modules\Core\Filters\Branch\BranchFilter;
 
-class Branch extends Model implements HasMedia
+class Branch extends TenantBaseModel implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia, Searchable;
+    use HasFactory, SoftDeletes, InteractsWithMedia, Searchable/*, HasTranslations*/;
     use Searchable {
         Searchable::search as parentSearch;
     }
@@ -43,6 +44,13 @@ class Branch extends Model implements HasMedia
 
 
 
+    protected $appends = [
+        'image',
+        'images'
+    ];
+
+
+
     public function scopeStatus($query)
     {
         $query->where('status', 1);
@@ -53,7 +61,8 @@ class Branch extends Model implements HasMedia
     public function toSearchableArray(): array
     {
         return [
-            'name' => $this->name,
+            'name'      => $this->name,
+            'area_name' => $this->area ? $this->area->name : null
         ];
     }
 
@@ -85,7 +94,7 @@ class Branch extends Model implements HasMedia
         $order_by = $ordering["order_by"] ?? null;
         $order_type = (!empty($ordering["order_type"]) && in_array(strtolower($ordering["order_type"]), ["desc", "asc"])) ? $ordering["order_type"] : 'asc';
         if ($order_by == 'name') {
-            return $this->orderBy('name', $order_type);
+            return $this->orderBy($order_by, $order_type);
         }
         if ($order_by == 'status') {
             return $this->orderBy($order_by, $order_type);
@@ -101,9 +110,45 @@ class Branch extends Model implements HasMedia
 
 
 
+    ///////////////////////// start image /////////////////////////
+    public function getImageAttribute()
+    {
+        $file = $this->getMedia('branch')->last();
+        if ($file) {
+            $file->id       = $this->getMedia('branch')->last()->id;
+            $file->url      = $file->getUrl();
+            $file->localUrl = app('url')->asset('storage/' . $file->id . '/' . $file->file_name);
+        }
+        return $file;
+    }
+
+
+
+    public function getImagesAttribute()
+    {
+        $files = $this->getMedia('branch_images');
+        return $this->filesData($files);
+    }
+
+
+
+    public function filesData($data)
+    {
+        $urls = [];
+        foreach ($data as $key => $file) {
+            $urls[$key]['id']  = $file->id;
+            $urls[$key]['url'] = $file->getFullUrl();
+            $file->localUrl    = app('url')->asset('storage/' . $file->id . '/' . $file->file_name);
+        }
+        return ($urls);
+    }
+    ///////////////////////// end image /////////////////////////
+
+
+
     //start relations
     public function area()
     {
-        return $this->belongsTo(\Modules\Core\Area\App\Models\Area::class, 'area_id', 'id');
+        return $this->belongsTo(\Modules\Core\Models\Area\Area::class, 'area_id', 'id');
     }
 }

@@ -18,32 +18,35 @@ class FirebaseNotificationService
 
     public function __construct()
     {
-        $factory = (new Factory)
-            ->withServiceAccount(config('firebase.projects.app.credentials'));
+        $factory = (new Factory)->withServiceAccount(config('firebase.projects.app.credentials'));
 
         $this->messaging = $factory->createMessaging();
     }
 
+
+
     /**
      * Send to single token
      */
-
     protected function buildPayload(array $data, $user, $senderId = null): array
     {
         return array_merge($data, [
-            'sender_id' => $senderId ?? auth()->id(),
-            'receiver_id' => $user->id,
+            'sender_id'     => $senderId ?? auth()->id(),
+            'receiver_id'   => $user->id,
             'receiver_type' => $user->type,
-            'sender_name' => auth()->user()->name ?? 'System',
+            'sender_name'   => auth()->user()->name ?? 'System',
         ]);
     }
+
+
+
     public function sendToToken(string $token, array $data = [], array $notification = []): bool
     {
         try {
 
             Log::info('FCM Sending Started', [
-                'token' => $token,
-                'data' => $data,
+                'token'        => $token,
+                'data'         => $data,
                 'notification' => $notification
             ]);
 
@@ -71,7 +74,7 @@ class FirebaseNotificationService
             $response = $this->messaging->send($message);
 
             Log::info('FCM Sent Successfully', [
-                'token' => $token,
+                'token'    => $token,
                 'response' => $response
             ]);
 
@@ -80,21 +83,18 @@ class FirebaseNotificationService
         } catch (\Throwable $e) {
 
             Log::error('FCM Send Failed', [
-
-                'token' => $token,
-
+                'token'         => $token,
                 'error_message' => $e->getMessage(),
-
-                'error_trace' => $e->getTraceAsString(),
-
-                'data' => $data,
-
-                'notification' => $notification
+                'error_trace'   => $e->getTraceAsString(),
+                'data'          => $data,
+                'notification'  => $notification
             ]);
 
             return false;
         }
     }
+
+
 
     /**
      * Send to multiple tokens
@@ -103,7 +103,7 @@ class FirebaseNotificationService
     {
         $results = [
             'success' => [],
-            'failed' => []
+            'failed'  => []
         ];
 
         foreach ($tokens as $token) {
@@ -118,6 +118,8 @@ class FirebaseNotificationService
 
         return $results;
     }
+
+
 
     /**
      * Send to user (multi-device)
@@ -169,11 +171,14 @@ class FirebaseNotificationService
 
     //     return $result;
     // }
+
+
+
     public function sendToUser($user, array $data = [], array $notification = []): array
     {
         Log::info('sendToUser START', [
-            'user_id' => is_object($user) ? $user->id : $user,
-            'data' => $data,
+            'user_id'      => is_object($user) ? $user->id : $user,
+            'data'         => $data,
             'notification' => $notification,
         ]);
         if (is_numeric($user)) {
@@ -197,19 +202,19 @@ class FirebaseNotificationService
         $tokens = array_unique(array_filter($tokens));
 
         Log::info('SENDING TO FIREBASE', [
-            'token' => $tokens,
+            'token'   => $tokens,
             'message' => [
                 'notification' => $notification,
-                'data' => $data,
+                'data'         => $data,
             ]
         ]);
 
         if (empty($tokens)) {
             return [
-                'success' => false,
-                'message' => 'No devices found',
+                'success'        => false,
+                'message'        => 'No devices found',
                 'success_tokens' => [],
-                'failed_tokens' => []
+                'failed_tokens'  => []
             ];
         }
 
@@ -223,6 +228,9 @@ class FirebaseNotificationService
 
         return $result;
     }
+
+
+
     /**
      * MAIN METHOD: Send notification, save to DB, and send push notifications
      */
@@ -273,6 +281,9 @@ class FirebaseNotificationService
     //     ];
 
     // }
+
+
+
     public function send($users,string $title,string $body,Model $model = null,array $data = [],?int $senderId = null)
     {
         // Resolve users
@@ -292,12 +303,12 @@ class FirebaseNotificationService
 
         // Save notification
         $dbNotification = DbNotification::create([
-            'sender_id' => $senderId ?? (auth()->id()),
-            'title' => $title,
-            'body' => $body,
-            'data' => $data,
+            'sender_id'  => $senderId ?? (auth()->id()),
+            'title'      => $title,
+            'body'       => $body,
+            'data'       => $data,
             'model_type' => $model ? get_class($model) : null,
-            'model_id' => $model?->id,
+            'model_id'   => $model?->id,
         ]);
 
         // Attach recipients
@@ -317,23 +328,23 @@ class FirebaseNotificationService
                 $payload,
                 [
                     'title' => $title,
-                    'body' => $body,
+                    'body'  => $body,
                 ]
             );
         }
 
         Log::info('🔥 FINAL FIREBASE PAYLOAD', [
-            'user_id' => $user->id,
+            'user_id'      => $user->id,
             'notification' => [
                 'title' => $title,
-                'body' => $body
+                'body'  => $body
             ],
-            'data' => $payload,
+            'data'         => $payload,
         ]);
 
         return [
-            'success' => true,
-            'db_notification' => $dbNotification,
+            'success'          => true,
+            'db_notification'  => $dbNotification,
             'firebase_results' => $firebaseResults
         ];
     }

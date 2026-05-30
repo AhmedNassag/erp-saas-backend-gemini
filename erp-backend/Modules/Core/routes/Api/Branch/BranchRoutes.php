@@ -16,7 +16,13 @@ use Modules\Core\Http\Controllers\Branch\BranchController;
 */
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
-    Route::prefix('core')->name('branch.')->group(function () {
-        Route::resource('/branch', BranchController::class);
+    Route::prefix('core/branch')->name('branch.')->group(function () {
+        // Route::resource('/', BranchController::class);
+        Route::get('/', [BranchController::class, 'index'])->name('index');
+        Route::post('/', [BranchController::class, 'store'])->name('store');
+        Route::get('/{id}', [BranchController::class, 'show'])->name('show');
+        Route::put('/{id}', [BranchController::class, 'update'])->name('update');
+        Route::delete('/{id}', [BranchController::class, 'destroy'])->name('destroy');
+        Route::post('/change-status/{id}', [BranchController::class, 'changeStatus'])->name('change-status');
     });
 });

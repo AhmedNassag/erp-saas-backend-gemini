@@ -26,11 +26,13 @@ class UpdateRequest extends FormRequest
      */
     public function messages()
     {
-        return [
+        $messages = [
             'name.required' => trans('validation.required'),
             'name.string'   => trans('validation.string'),
             'name.unique'   => trans('validation.unique'),
         ];
+
+        return $messages;
     }
 
     /**

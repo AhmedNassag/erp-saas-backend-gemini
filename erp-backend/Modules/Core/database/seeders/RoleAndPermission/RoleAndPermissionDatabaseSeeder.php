@@ -4,6 +4,8 @@ namespace Modules\Core\Database\Seeders\RoleAndPermission;
 
 use Illuminate\Database\Seeder;
 use App\Traits\PermissionSeederTrait;
+use Modules\Core\Models\RoleAndPermission\Role;
+use Modules\Core\Models\RoleAndPermission\Permission;
 
 class RoleAndPermissionDatabaseSeeder extends Seeder
 {
@@ -23,5 +25,16 @@ class RoleAndPermissionDatabaseSeeder extends Seeder
             ['role' => 'Core'],
             $actions
         );
+
+        // 3️⃣ Create Admin role and assign all existing permissions
+        $adminRole = Role::firstOrCreate([
+            'name'       => 'Admin',
+            'guard_name' => 'tenant',
+        ]);
+
+        $allPermissions = Permission::all();
+        if ($allPermissions->isNotEmpty()) {
+            $adminRole->syncPermissions($allPermissions);
+        }
     }
 }

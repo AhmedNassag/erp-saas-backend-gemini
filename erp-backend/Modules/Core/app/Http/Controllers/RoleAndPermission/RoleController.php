@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Modules\Core\Http\Requests\RoleAndPermission\Role\StoreRequest;
 use Modules\Core\Http\Requests\RoleAndPermission\Role\UpdateRequest;
+use Modules\Core\Http\Requests\RoleAndPermission\Role\ChangeStatusRequest;
 use Modules\Core\Models\RoleAndPermission\Role;
 use Modules\Core\Repositories\RoleAndPermission\RoleInterface;
 
@@ -17,11 +18,11 @@ class RoleController extends Controller
     {
         $this->role = $role;
 
-        $this->middleware('permission:read-role', ['only' => ['index']]);
-        $this->middleware('permission:show-role', ['only' => ['show']]);
-        $this->middleware('permission:create-role', ['only' => ['store']]);
-        $this->middleware('permission:update-role', ['only' => ['update']]);
-        $this->middleware('permission:delete-role', ['only' => ['destroy']]);
+        $this->middleware('permission:read-role,tenant', ['only' => ['index']]);
+        $this->middleware('permission:show-role,tenant', ['only' => ['show']]);
+        $this->middleware('permission:create-role,tenant', ['only' => ['store']]);
+        $this->middleware('permission:update-role,tenant', ['only' => ['update']]);
+        $this->middleware('permission:delete-role,tenant', ['only' => ['destroy']]);
     }
 
 
@@ -39,9 +40,9 @@ class RoleController extends Controller
     /**
      * Show the specified resource.
     */
-    public function show(Role $role)
+    public function show($id)
     {
-        return $this->role->show($role);
+        return $this->role->show($id);
     }
 
 
@@ -59,9 +60,9 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
     */
-    public function update(Role $role , UpdateRequest $request)
+    public function update($id , UpdateRequest $request)
     {
-        return $this->role->update($role , $request);
+        return $this->role->update($id, $request);
     }
 
 
@@ -69,8 +70,8 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
     */
-    public function destroy(Role $role)
+    public function destroy($id)
     {
-        return $this->role->destroy($role);
+        return $this->role->destroy($id);
     }
 }

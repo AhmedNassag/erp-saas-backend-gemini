@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\SuperAdmin;
+use Modules\Landlord\Models\SuperAdmin;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -16,11 +16,11 @@ class SuperAdminSeeder extends Seeder
                 'name'      => 'Super Admin',
                 'email'     => 'ahmednassag@gmail.com',
                 'mobile'    => '01016856433',
-                'password'  => Hash::make('password'),
+                'password'  => Hash::make('12345678'),
                 'is_active' => true,
             ]
         );
 
-        $this->command->info('SuperAdmin created: ahmednassag@gmail.com / password');
+        $this->command->info('SuperAdmin created: ahmednassag@gmail.com / 12345678');
     }
 }

@@ -2,20 +2,21 @@
 
 namespace Modules\Core\Models\Area;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TenantBaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Translatable\HasTranslations;
 use Laravel\Scout\Searchable;
 use App\Traits\ActivityLogTrait;
 use Modules\Core\Filters\Area\AreaFilter;
 use Modules\Core\Models\Branch\Branch;
 use Modules\Core\Models\City\City;
 
-class Area extends Model implements HasMedia
+class Area extends TenantBaseModel implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia, Searchable;
+    use HasFactory, SoftDeletes, InteractsWithMedia, Searchable/*, HasTranslations*/;
     use Searchable {
         Searchable::search as parentSearch;
     }
@@ -55,7 +56,8 @@ class Area extends Model implements HasMedia
     public function toSearchableArray(): array
     {
         return [
-            'name' => $this->name,
+            'name'      => $this->name,
+            'city_name' => $this->city ? $this->city->name : null
         ];
     }
 
@@ -87,7 +89,7 @@ class Area extends Model implements HasMedia
         $order_by = $ordering["order_by"] ?? null;
         $order_type = (!empty($ordering["order_type"]) && in_array(strtolower($ordering["order_type"]), ["desc", "asc"])) ? $ordering["order_type"] : 'asc';
         if ($order_by == 'name') {
-            return $this->orderBy('name', $order_type);
+            return $this->orderBy($order_by, $order_type);
         }
         if ($order_by == 'status') {
             return $this->orderBy($order_by, $order_type);

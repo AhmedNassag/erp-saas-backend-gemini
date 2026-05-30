@@ -5,41 +5,36 @@ namespace Modules\Landlord\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Log;
-use Modules\Landlord\Listeners\CreateTenantDatabaseListener;
+use Modules\Landlord\Models\Tenant;
+use Modules\Landlord\Services\Payments\PayMobService;
 
 class PortfolioController extends Controller
 {
+    public function __construct(
+        protected PayMobService $paymob
+    ) {}
+
     public function home()
     {
         return view('landlord::portfolio.home');
     }
-
-
 
     public function about()
     {
         return view('landlord::portfolio.about');
     }
 
-
-
     public function contact()
     {
         return view('landlord::portfolio.contact');
     }
 
-
     public function pricing() 
     {
-        // جلب الباقات المتاحة من داتا بيز اللاندلورد
         $packages = DB::connection('landlord')->table('packages')->where('is_active', true)->get();
         return view('landlord::portfolio.pricing', compact('packages'));
     }
-
-
 
     public function subscribeForm($package_id)
     {
@@ -47,144 +42,124 @@ class PortfolioController extends Controller
         return view('landlord::portfolio.subscribe', compact('package'));
     }
 
-
-
     public function processCheckout(Request $request, $package_id)
     {
         Log::info('======= بداية عملية Checkout =======');
-        Log::info('Package ID: ' . $package_id);
-        Log::info('Request Data: ', $request->all());
 
         $request->validate([
             'company_name' => 'required|string|max:255',
-            'subdomain' => 'required|alpha|min:3|max:20',
-            'admin_name' => 'required|string|max:255',
-            'admin_email' => 'required|email',
+            'subdomain'    => 'required|alpha|min:3|max:20',
+            'admin_name'   => 'required|string|max:255',
+            'admin_email'  => 'required|email',
             'admin_password' => 'required|min:6',
         ]);
 
-        // التأكد إن الساب دومين مش محجوز
         $domainName = $request->subdomain . '.erp.test';
-        Log::info('التحقق من النطاق: ' . $domainName);
-        
-        $exists = DB::connection('landlord')->table('tenants')->where('domain', $domainName)->exists();
-        if ($exists) {
-            Log::warning('النطاق محجوز بالفعل: ' . $domainName);
+
+        if (DB::connection('landlord')->table('tenants')->where('domain', $domainName)->exists()) {
             return back()->withErrors(['subdomain' => 'هذا النطاق محجوز بالفعل!']);
         }
-        Log::info('النطاق متاح ✅');
 
-        // 1. تسجيل كارت الـ Tenant في داتا بيز الـ Landlord
-        $dbName = 'erp_tenant_' . $request->subdomain;
-        Log::info('إنشاء Tenant جديد:', [
-            'company_name' => $request->company_name,
-            'domain' => $domainName,
-            'database' => $dbName,
-            'package_id' => $package_id
-        ]);
+        $package = DB::connection('landlord')->table('packages')->where('id', $package_id)->first();
+        if (!$package) {
+            return back()->withErrors(['package' => 'Package not found.']);
+        }
 
-        $tenantId = DB::connection('landlord')->table('tenants')->insertGetId([
-            'name' => $request->company_name,
-            'domain' => $domainName,
-            'database' => $dbName,
+        $tenant = Tenant::create([
+            'name'     => $request->company_name,
+            'domain'   => $domainName,
+            'database' => 'erp_tenant_' . $request->subdomain,
             'package_id' => $package_id,
-            'subscription_ends_at' => now()->addYear(),
-            'status' => 'active',
-            'created_at' => now(),
-            'updated_at' => now(),
+            'status'   => 'pending',
         ]);
 
-        Log::info('Tenant تم إنشاؤه بنجاح - ID: ' . $tenantId);
-
-        // جلب الـ Tenant كـ Object
-        $tenant = DB::connection('landlord')->table('tenants')->where('id', $tenantId)->first();
-        Log::info('بيانات Tenant:', (array)$tenant);
-
-        // 2. تشغيل الـ Automation بالكامل عبر الـ Listener
-        Log::info('بدء تشغيل CreateTenantDatabaseListener...');
-        try {
-            $listener = new CreateTenantDatabaseListener();
-            $listener->handle($tenant);
-            Log::info('CreateTenantDatabaseListener تم التنفيذ بنجاح ✅');
-        } catch (\Exception $e) {
-            Log::error('خطأ في CreateTenantDatabaseListener: ' . $e->getMessage());
-            Log::error($e->getTraceAsString());
-            throw $e;
-        }
-
-        // 3. تأمين الاتصال على داتا بيز العميل الجديد
-        Log::info('تأمين الاتصال بقاعدة بيانات العميل: ' . $dbName);
-        config(['database.connections.tenant.database' => $dbName]);
-        
-        try {
-            DB::connection('tenant')->reconnect();
-            Log::info('تم إعادة الاتصال بقاعدة البيانات بنجاح ✅');
-            
-            // التحقق من وجود الاتصال
-            $connectionName = DB::connection('tenant')->getDatabaseName();
-            Log::info('متصل بقاعدة البيانات: ' . $connectionName);
-            
-        } catch (\Exception $e) {
-            Log::error('فشل الاتصال بقاعدة البيانات: ' . $e->getMessage());
-            throw $e;
-        }
-
-        // 4. إنشاء حساب الـ Admin
-        Log::info('بدء إنشاء حساب Admin:', [
-            'name' => $request->admin_name,
-            'email' => $request->admin_email,
-            'role' => 'admin'
+        // Store admin info temporarily in session for later use
+        session([
+            'pending_subscription' => [
+                'tenant_id'       => $tenant->id,
+                'admin_name'      => $request->admin_name,
+                'admin_email'     => $request->admin_email,
+                'admin_password'  => $request->admin_password,
+                'subdomain'       => $request->subdomain,
+            ],
         ]);
 
-        try {
-            // التحقق من وجود جدول users
-            if (!DB::connection('tenant')->getSchemaBuilder()->hasTable('users')) {
-                Log::error('جدول users غير موجود في قاعدة بيانات العميل!');
-                throw new \Exception('جدول users غير موجود');
+        // If PayMob is configured, redirect to payment
+        // Otherwise provision immediately (dev mode)
+        if ($this->paymob->isConfigured()) {
+            try {
+                $amount = (float) ($package->price ?? 0);
+                $payment = $this->paymob->initPayment($tenant, $package_id, $amount);
+                $iframeUrl = $this->paymob->getIframeUrl($payment->paymob_payment_key);
+
+                Log::info('توجيه للدفع عبر PayMob', ['url' => $iframeUrl]);
+
+                return redirect()->away($iframeUrl);
+            } catch (\Exception $e) {
+                Log::error('PayMob checkout failed', ['error' => $e->getMessage()]);
+                $tenant->delete();
+                session()->forget('pending_subscription');
+                return back()->withErrors(['payment' => 'Payment gateway error. Please try again.']);
             }
-            Log::info('جدول users موجود ✅');
-
-            // التحقق من وجود حقل role في الجدول
-            $columns = DB::connection('tenant')->getSchemaBuilder()->getColumnListing('users');
-            Log::info('الأعمدة الموجودة في جدول users:', $columns);
-            
-            if (!in_array('role', $columns)) {
-                Log::warning('⚠️ حقل role غير موجود في جدول users! سيتم إدخال بدون role');
-            }
-
-            $userId = DB::connection('tenant')->table('users')->insertGetId([
-                'name' => $request->admin_name,
-                'email' => $request->admin_email,
-                'password' => Hash::make($request->admin_password),
-                'role' => 'admin', // لو الحقل موجود
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            Log::info('Admin تم إنشاؤه بنجاح - User ID: ' . $userId);
-            
-            // التحقق من أن المستخدم تم حفظه فعلاً
-            $savedUser = DB::connection('tenant')->table('users')->find($userId);
-            Log::info('بيانات المستخدم المحفوظة:', (array)$savedUser);
-            
-        } catch (\Exception $e) {
-            Log::error('❌ فشل إنشاء حساب Admin: ' . $e->getMessage());
-            Log::error($e->getTraceAsString());
-            throw $e;
         }
 
-        // 5. تخزين اللينك في السيشن
-        $loginUrl = "http://" . $request->subdomain . ".erp.test:8000";
-        Log::info('تم الانتهاء بنجاح! رابط تسجيل الدخول: ' . $loginUrl);
-        Log::info('======= نهاية عملية Checkout بنجاح =======');
-
-        return redirect()->route('landlord.payment.success')->with([
-            'login_url' => $loginUrl,
-            'email' => $request->admin_email
-        ]);
+        // Fallback: direct provisioning without payment (dev mode)
+        Log::info('PayMob غير مُهيأ، تشغيل الوضع المباشر (بدون دفع)');
+        return $this->provisionTenant($tenant);
     }
 
+    private function provisionTenant(Tenant $tenant)
+    {
+        $pending = session('pending_subscription');
+        if (!$pending) {
+            return redirect()->route('landlord.home');
+        }
 
+        try {
+            $listener = new \Modules\Landlord\Listeners\CreateTenantDatabaseListener();
+            $listener->handle($tenant);
+
+            $dbName = $tenant->database;
+            config(['database.connections.tenant.database' => $dbName]);
+            \Illuminate\Support\Facades\DB::purge('tenant');
+            \Illuminate\Support\Facades\DB::reconnect('tenant');
+
+            if (\Illuminate\Support\Facades\DB::connection('tenant')->getSchemaBuilder()->hasTable('users')) {
+                \Illuminate\Support\Facades\DB::connection('tenant')->table('users')->insert([
+                    'name'       => $pending['admin_name'],
+                    'email'      => $pending['admin_email'],
+                    'password'   => \Illuminate\Support\Facades\Hash::make($pending['admin_password']),
+                    'role'       => 'admin',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                $userId = \Illuminate\Support\Facades\DB::connection('tenant')->table('users')->where('email', $pending['admin_email'])->value('id');
+                $roleId = \Illuminate\Support\Facades\DB::connection('tenant')->table('roles')->where('name', 'Admin')->where('guard_name', 'tenant')->value('id');
+                if ($userId && $roleId) {
+                    \Illuminate\Support\Facades\DB::connection('tenant')->table('model_has_roles')->insert([
+                        'role_id'    => $roleId,
+                        'model_type' => 'App\Models\User',
+                        'model_id'   => $userId,
+                    ]);
+                }
+            }
+
+            $tenant->update(['status' => 'active']);
+
+            session()->forget('pending_subscription');
+
+            return redirect()->route('landlord.payment.success-display')->with([
+                'login_url' => "http://" . $pending['subdomain'] . ".erp.test:8000",
+                'email'     => $pending['admin_email'],
+            ]);
+        } catch (\Exception $e) {
+            Log::error('❌ فشل التجهيز:', ['error' => $e->getMessage()]);
+            $tenant->delete();
+            session()->forget('pending_subscription');
+            return back()->withErrors(['provisioning' => 'Failed to create tenant.']);
+        }
+    }
 
     public function paymentSuccess()
     {

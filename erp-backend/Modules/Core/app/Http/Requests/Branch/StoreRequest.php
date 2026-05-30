@@ -11,20 +11,15 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
-        $roles = [] ;
-
-        foreach (config('myConfig.langs') as $lang)
-        {
-            $roles ['name.'.$lang] = 'required|unique:branches,name->'.$lang.',NULL,id,deleted_at,NULL';
-        }
-
-        $roles = array_merge($roles, [
-            'code'    => 'required|unique:branches,branch_code,NULL,id,deleted_at,NULL',
-            'mobile'  => 'required|unique:branches,mobile,NULL,id,deleted_at,NULL',
-            'address' => 'nullable|string',
-            'status'  => 'required|in:0,1',
-            'area_id' => 'required|exists:areas,id',
-        ]);
+        $roles = [
+            'name'     => 'required|string|unique:tenant.branches,name,NULL,id,deleted_at,NULL',
+            'code'     => 'required|unique:tenant.branches,branch_code,NULL,id,deleted_at,NULL',
+            'mobile'   => 'required|unique:tenant.branches,mobile,NULL,id,deleted_at,NULL',
+            'address'  => 'nullable|string',
+            'area_id'  => 'required|exists:tenant.areas,id',
+            'image'    => 'nullable|file|image|mimes:png,jpg,jpeg|max:5000',
+            'images.*' => 'nullable|file|image|mimes:png,jpg,jpeg|max:5000',
+        ];
 
         return $roles;
     }
@@ -37,27 +32,29 @@ class StoreRequest extends FormRequest
      */
     public function messages()
     {
-        $messages = [];
-
-        // Add name messages for each language
-        foreach (config('myConfig.langs') as $lang) {
-            $messages['name.' . $lang . '.required'] = __('validation.required', ['attribute' => __('branch.name') . ' (' . strtoupper($lang) . ')']);
-            $messages['name.' . $lang . '.unique']   = __('validation.unique', ['attribute' => __('branch.name') . ' (' . strtoupper($lang) . ')']);
-        }
-
-        // Add other field messages
-        $messages = array_merge($messages, [
-            'code.required'    => __('validation.required', ['attribute' => __('branch.code')]),
-            'code.unique'      => __('validation.unique', ['attribute' => __('branch.code')]),
-            'mobile.required'  => __('validation.required', ['attribute' => __('branch.mobile')]),
-            'mobile.unique'    => __('validation.unique', ['attribute' => __('branch.mobile')]),
-            'address.nullable' => __('validation.nullable', ['attribute' => __('branch.address')]),
-            'address.string'   => __('validation.string', ['attribute' => __('branch.address')]),
-            'status.required'  => __('validation.required', ['attribute' => __('branch.status')]),
-            'status.in'        => __('validation.in', ['attribute' => __('branch.status')]),
-            'area_id.required' => __('validation.required', ['attribute' => __('branch.area_id')]),
-            'area_id.exists'   => __('validation.exists', ['attribute' => __('branch.area_id')]),
-        ]);
+        $messages = [
+            'name.required'     => trans('validation.required'),
+            'name.string'       => trans('validation.string'),
+            'name.unique'       => trans('validation.unique'),
+            'code.required'     => trans('validation.required'),
+            'code.unique'       => trans('validation.unique'),
+            'mobile.required'   => trans('validation.required'),
+            'mobile.unique'     => trans('validation.unique'),
+            'address.nullable'  => trans('validation.nullable'),
+            'address.string'    => trans('validation.string'),
+            'area_id.required'  => trans('validation.required'),
+            'area_id.exists'    => trans('validation.exists'),
+            'image.nullable'    => trans('validation.nullable'),
+            'image.file'        => trans('validation.file'),
+            'image.image'       => trans('validation.image'),
+            'image.mimes'       => trans('validation.mimes'),
+            'image.max'         => trans('validation.max'),
+            'images.*.nullable' => trans('validation.nullable'),
+            'images.*.file'     => trans('validation.file'),
+            'images.*.image'    => trans('validation.image'),
+            'images.*.mimes'    => trans('validation.mimes'),
+            'images.*.max'      => trans('validation.max'),
+        ];
 
         return $messages;
     }

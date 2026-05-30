@@ -21,7 +21,7 @@ trait PermissionSeederTrait
                     $permissionName = $action . '-' . strtolower($model);
 
                     $permission = Permission::where('name', $permissionName)
-                        ->where('guard_name', 'sanctum')
+                        ->where('guard_name', 'tenant')
                         ->first();
 
                     if ($permission) {
@@ -32,7 +32,7 @@ trait PermissionSeederTrait
                     } else {
                         Permission::create([
                             'name' => $permissionName,
-                            'guard_name' => 'sanctum',
+                            'guard_name' => 'tenant',
                             'module' => $moduleName,
                         ]);
                         Log::info("Created permission: {$permissionName} with module: {$moduleName}");

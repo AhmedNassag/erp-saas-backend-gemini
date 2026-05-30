@@ -17,7 +17,7 @@ class PermissionController extends Controller
     {
         $this->permission = $permission;
 
-        $this->middleware('permission:read-permission', ['only' => ['index']]);
+        $this->middleware('permission:read-permission,tenant', ['only' => ['index']]);
     }
 
 

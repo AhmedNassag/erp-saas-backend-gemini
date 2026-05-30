@@ -15,7 +15,6 @@ class CountryResource extends JsonResource
             'id'      => $this->id,
             'status'  => $this->status ?? null,
             'name'    => $this->name,
-            'image'   => $this->img ? $this->img->localUrl : '---',
         ];
     }
 }

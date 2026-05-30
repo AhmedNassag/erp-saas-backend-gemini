@@ -4,13 +4,15 @@ namespace Modules\Core\Repositories\Branch;
 
 interface BranchInterface
 {
-    public function index($request);
+    public function index($request, $filter);
  
     public function store($request);
  
-    public function show($branch);
+    public function show($id);
 
-    public function update($branch, $request);
+    public function update($id, $request);
     
-    public function destroy($branch);
+    public function destroy($id);
+
+    public function changeStatus($id, $request);
 }

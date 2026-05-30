@@ -13,7 +13,7 @@ class CountryDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $actions = ['read', 'create', 'show', 'update', 'delete'];
+        $actions = ['read', 'create', 'show', 'update', 'delete', 'changeStatus'];
         $models  = ['country' => 'Core'];
 
         $this->createOrUpdatePermissions($models, $actions);

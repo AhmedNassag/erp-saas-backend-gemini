@@ -274,7 +274,7 @@
             @php
             $pricingFaqs = [
                 ['q'=>'Can I change my plan later?','a'=>'Yes, you can upgrade or downgrade your plan at any time. Upgrades take effect immediately and you\'ll be charged the prorated difference. Downgrades take effect at the next billing cycle.'],
-                ['q'=>'What payment methods do you accept?','a'=>'We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and bank transfers for annual Enterprise plans. All payments are processed securely via Stripe.'],
+                ['q'=>'What payment methods do you accept?','a'=>'We accept InstaPay, mobile wallets (Vodafone Cash, Etisalat Flous, Orange Money, WE Pay), and all major credit/debit cards (Visa, Mastercard). All payments are processed securely via PayMob.'],
                 ['q'=>'Is there a setup fee?','a'=>'No setup fees, ever. The price you see is the price you pay. Your account is provisioned instantly after signup with no additional charges.'],
                 ['q'=>'What happens when my trial ends?','a'=>'At the end of your 14-day trial, you\'ll be prompted to choose a plan. If you don\'t upgrade, your account will be paused (not deleted) and you can reactivate anytime within 30 days.'],
             ];

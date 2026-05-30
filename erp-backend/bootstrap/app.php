@@ -14,7 +14,10 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'tenant' => \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
+            'tenant'            => \Spatie\Multitenancy\Http\Middleware\NeedsTenant::class,
+            'role'              => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'permission'        => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+            'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
 
         // 💡 الطريقة الرسمية والمستقرة: بنقول للارافيل لما يجي يطرد يوزر مش مسجل دخول (Guest)

@@ -2,7 +2,7 @@
 
 namespace Modules\Core\Models\City;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Models\TenantBaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
@@ -14,9 +14,9 @@ use Modules\Core\Filters\City\CityFilter;
 use Modules\Core\Models\Area\Area;
 use Modules\Core\Models\Country\Country;
 
-class City extends Model implements HasMedia
+class City extends TenantBaseModel implements HasMedia
 {
-    use HasFactory, SoftDeletes, HasTranslations, InteractsWithMedia, Searchable;
+    use HasFactory, SoftDeletes, InteractsWithMedia, Searchable/*, HasTranslations*/;
     use Searchable {
         Searchable::search as parentSearch;
     }
@@ -38,12 +38,10 @@ class City extends Model implements HasMedia
     /**
      * The attributes that are mass assignable.
      */
-    protected $guarded = ['id'];
-
-    public $translatable = ['name'];
-
-    protected $casts = [
-        'name' => 'json',
+    protected $fillable = [
+        'name',
+        'status',
+        'country_id'
     ];
 
 
@@ -66,8 +64,8 @@ class City extends Model implements HasMedia
     public function toSearchableArray()
     {
         return [
-            'name->' . app()->getLocale() => $this->getTranslation('name', app()->getLocale()),
-            'countries.name->' . app()->getLocale() => '',
+            'name'         => $this->name,
+            'country.name' => $this->country ? $this->country->name : null,
         ];
     }
 
@@ -92,7 +90,7 @@ class City extends Model implements HasMedia
         $order_by = $ordering["order_by"] ?? null;
         $order_type = (!empty($ordering["order_type"]) && in_array(strtolower($ordering["order_type"]), ["desc", "asc"])) ? $ordering["order_type"] : 'asc';
         if ($order_by == 'name') {
-            return $this->orderBy($order_by, $order_type)->orderByRaw('JSON_EXTRACT(name, "$.' . app()->getLocale() . '") ' . $order_type);
+            return $this->orderBy($order_by, $order_type);
         }
         if (in_array($order_by, ['country_id'])) {
             $model = str_replace("y_id", "", $order_by);

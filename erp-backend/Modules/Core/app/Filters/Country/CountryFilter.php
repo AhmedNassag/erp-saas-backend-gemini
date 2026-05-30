@@ -6,18 +6,22 @@ use App\Filters\Filters;
 
 class CountryFilter extends Filters
 {
-    protected $var_filters = [
+    protected array $var_filters = [
         'search',
         'status',
     ];
 
+
+
     public function status($status)
     {
-        if ($status != 'null' && $status != null) {
+        if($status != 'null' && $status != null) {
             return $this->builder->where('status', $status);
         }
     }
 
+
+    
     public function search($search)
     {
         return $this->builder->where(function ($query) use ($search) {

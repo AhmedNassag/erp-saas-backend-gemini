@@ -15,8 +15,9 @@ class CreateTenantDatabaseListener
             return;
         }
 
-        // 1. إنشاء قاعدة البيانات الجديدة للعميل
-        DB::statement("CREATE DATABASE IF NOT EXISTS `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
+        // 1. إنشاء قاعدة البيانات الجديدة للعميل (حذف القديمة أولاً لضمان النظافة)
+        DB::statement("DROP DATABASE IF EXISTS `{$dbName}`;");
+        DB::statement("CREATE DATABASE `{$dbName}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;");
 
         // 2. تغيير اتصال الـ tenant ديناميكياً
         config(['database.connections.tenant.database' => $dbName]);

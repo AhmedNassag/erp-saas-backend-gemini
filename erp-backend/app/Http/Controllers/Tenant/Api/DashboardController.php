@@ -28,20 +28,20 @@ class DashboardController extends Controller
 
         // 3. الرد بالـ JSON النظيف للـ Vue 3 لبناء الـ Widgets
         return response()->json([
-            'status' => 'success',
+            'status'  => 'success',
             'message' => 'Welcome to your ERP Dashboard',
-            'data' => [
+            'data'    => [
                 'current_connection' => 'tenant',
                 'connected_database' => $currentDatabase, // هتقرأ erp_tenant_subdomain
-                'company' => \Spatie\Multitenancy\Models\Tenant::current()->name, // اسم الشركة من الـ Landlord
-                'user' => [
-                    'name' => $user->name,
+                'company'            => \Spatie\Multitenancy\Models\Tenant::current()->name, // اسم الشركة من الـ Landlord
+                'user'               => [
+                    'name'  => $user->name,
                     'email' => $user->email,
-                    'role' => $user->role,
+                    'role'  => $user->role,
                 ],
-                'stats' => [
+                'stats'              => [
                     'active_users_count' => 1,
-                    'package_status' => 'active'
+                    'package_status'     => 'active'
                 ]
             ]
         ], 200);

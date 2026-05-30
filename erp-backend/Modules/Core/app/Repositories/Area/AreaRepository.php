@@ -1,19 +1,17 @@
-﻿<?php
+<?php
 
 namespace Modules\Core\Repositories\Area;
 
-use App\Http\Responses\ApiResponse;
 use App\Traits\API;
-use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Modules\Core\Models\Area\Area;
 use Modules\Core\Repositories\Area\AreaInterface;
-use Modules\Core\Resources\Area\AreasResource;
+use Modules\Core\Resources\Area\AreaResource;
 
-class AreaRepository extends BaseRepository implements AreaInterface
+class AreaRepository implements AreaInterface
 {
-    public function getModel()
+    public function getModel(): \Illuminate\Database\Eloquent\Model
     {
         return new Area();
     }
@@ -22,23 +20,25 @@ class AreaRepository extends BaseRepository implements AreaInterface
 
     public function index($request, $filter): \Illuminate\Http\JsonResponse
     {
-        $perPage = $request['per_page'] ?? config('myConfig.paginationCount');
+        $perPage    = $request['per_page'] ?? config('myConfig.paginationCount');
         $collection = $this->getModel()->ordering($request->ordering)->filter($filter);
-        $data = $perPage == -1 ? $collection->get() : $collection->paginate($perPage);
+        $data       = $perPage == -1 ? $collection->where('status', 1)->get() : $collection->paginate($perPage);
 
         return (new API)
             ->isOk(__('Areas'))
-            ->setData($perPage == -1 ? AreasResource::collection($data) : (new API)->api_model_set_paginate(AreasResource::collection($data), $data))
+            ->setData($perPage == -1 ? AreaResource::collection($data) : (new API)->api_model_set_paginate(AreaResource::collection($data), $data))
             ->build();
     }
 
 
 
-    public function show($area)
+    public function show($id, array $with = [])
     {
+        $area = $this->getModel()->with($with)->findOrFail($id);
+
         return (new API)
             ->isOk(__('Area Data'))
-            ->setData(AreasResource::make($area))
+            ->setData(AreaResource::make($area))
             ->build();
     }
 
@@ -48,7 +48,6 @@ class AreaRepository extends BaseRepository implements AreaInterface
     {
         try {
             $area = $this->getModel()->create($request->validated());
-            //save image with area object
 
             return (new API)
                 ->isOk(__('Stored Successfully'))
@@ -63,11 +62,11 @@ class AreaRepository extends BaseRepository implements AreaInterface
 
 
 
-    public function update($area, $request)
+    public function update($id, $request)
     {
         try {
+            $area = $this->getModel()->findOrFail($id);
             $area->update($request->validated());
-            //save new image with area object and delete old image
 
             return (new API)
                 ->isOk(__('Updated Successfully'))
@@ -82,11 +81,25 @@ class AreaRepository extends BaseRepository implements AreaInterface
 
 
 
-    public function destroy($area)
+    public function destroy($id)
     {
+        $area = $this->getModel()->findOrFail($id);
         $area->delete();
+        
         return (new API)
             ->isOk(__('Destroyed Successfully'))
+            ->build();
+    }
+
+
+
+    public function changeStatus($id, $request)
+    {
+        $area = $this->getModel()->findOrFail($id);
+        $area->update(['status' => $request->status]);
+
+        return (new API)
+            ->isOk(__('Status Changed Successfully'))
             ->build();
     }
 }

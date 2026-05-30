@@ -19,11 +19,13 @@ class BranchResource extends JsonResource
             'mobile'       => $this->mobile ?? null,
             'address'      => $this->address ?? null,
             'area_id'      => $this->area_id,
-            'area_name'    => $this->area->name ?? null,
-            'city_id'      => $this->area->city_id ?? null,
-            'city_name'    => $this->area->city->name ?? null,
-            'country_id'   => $this->area->city->country_id ?? null,
-            'country_name' => $this->area->city->country->name ?? null,
+            'area_name'    => $this->area?->name ?? null,
+            'city_id'      => $this->area?->city_id ?? null,
+            'city_name'    => $this->area?->city?->name ?? null,
+            'country_id'   => $this->area?->city?->country_id ?? null,
+            'country_name' => $this->area?->city?->country?->name ?? null,
+            'image'        => $this->image ? $this->image->localUrl : null,
+            'images'       => $this->images ?? null,
         ];
     }
 }

@@ -4,6 +4,16 @@ namespace Modules\Landlord\Providers;
 
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Modules\Landlord\Repositories\Package\PackageInterface;
+use Modules\Landlord\Repositories\Package\PackageRepository;
+use Modules\Landlord\Repositories\Tenant\TenantInterface;
+use Modules\Landlord\Repositories\Tenant\TenantRepository;
+use Modules\Landlord\Repositories\Language\LanguageInterface;
+use Modules\Landlord\Repositories\Language\LanguageRepository;
+use Modules\Landlord\Repositories\Translation\TranslationInterface;
+use Modules\Landlord\Repositories\Translation\TranslationRepository;
+use Modules\Landlord\Repositories\Subscription\SubscriptionInterface;
+use Modules\Landlord\Repositories\Subscription\SubscriptionRepository;
 
 class LandlordServiceProvider extends ModuleServiceProvider
 {
@@ -18,13 +28,6 @@ class LandlordServiceProvider extends ModuleServiceProvider
     protected string $nameLower = 'landlord';
 
     /**
-     * Command classes to register.
-     *
-     * @var string[]
-     */
-    // protected array $commands = [];
-
-    /**
      * Provider classes to register.
      *
      * @var string[]
@@ -34,13 +37,14 @@ class LandlordServiceProvider extends ModuleServiceProvider
         RouteServiceProvider::class,
     ];
 
-    /**
-     * Define module schedules.
-     * 
-     * @param $schedule
-     */
-    // protected function configureSchedules(Schedule $schedule): void
-    // {
-    //     $schedule->command('inspire')->hourly();
-    // }
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->bind(PackageInterface::class,        PackageRepository::class);
+        $this->app->bind(TenantInterface::class,         TenantRepository::class);
+        $this->app->bind(LanguageInterface::class,       LanguageRepository::class);
+        $this->app->bind(TranslationInterface::class,    TranslationRepository::class);
+        $this->app->bind(SubscriptionInterface::class,   SubscriptionRepository::class);
+    }
 }

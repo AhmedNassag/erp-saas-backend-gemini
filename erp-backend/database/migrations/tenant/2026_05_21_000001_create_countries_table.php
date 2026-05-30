@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->boolean('status')->default(1);
             $table->index('name');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

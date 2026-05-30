@@ -13,33 +13,28 @@ class EgyptSeeder extends Seeder
 
         try {
             // ---------------- 1) Insert Egypt ----------------
-            $country = DB::table('countries')
-                ->where('name', json_encode(['ar' => 'مصر', 'en' => 'Egypt']))
-                ->first();
+            $country = DB::table('countries')->where('name', 'Egypt')->first();
 
             $country_id = $country ? $country->id : DB::table('countries')->insertGetId([
-                'name' => json_encode(['ar' => 'مصر', 'en' => 'Egypt']),
+                'name' => 'Egypt',
             ]);
 
             // ---------------- 2) Cities ----------------
             $cities = [
-                ['ar' => 'القاهرة', 'en' => 'Cairo'],
-                ['ar' => 'الجيزة', 'en' => 'Giza'],
-                ['ar' => 'الإسكندرية', 'en' => 'Alexandria'],
+                'Cairo',
+                'Giza',
+                'Alexandria',
             ];
 
             foreach ($cities as $city) {
-                $nameJson = json_encode(['ar' => $city['ar'], 'en' => $city['en']]);
+                $name = $city;
 
                 // Check existence first
-                $exists = DB::table('cities')
-                    ->where('country_id', $country_id)
-                    ->where('name', $nameJson)
-                    ->first();
+                $exists = DB::table('cities')->where('country_id', $country_id)->where('name', $name)->first();
 
                 if (!$exists) {
                     DB::table('cities')->insert([
-                        'name' => $nameJson,
+                        'name'       => $name,
                         'country_id' => $country_id,
                     ]);
                 }

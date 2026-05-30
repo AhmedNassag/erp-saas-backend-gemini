@@ -13,7 +13,7 @@ class AreaDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $actions = ['read', 'create', 'show', 'update', 'delete'];
+        $actions = ['read', 'create', 'show', 'update', 'delete', 'changeStatus'];
         $models  = ['area' => 'Core'];
 
         $this->createOrUpdatePermissions($models, $actions);

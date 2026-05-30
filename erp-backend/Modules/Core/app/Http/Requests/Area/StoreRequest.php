@@ -12,16 +12,10 @@ class StoreRequest extends FormRequest
      */
     public function rules()
     {
-        $roles = [];
-
-        foreach (config('myConfig.langs') as $lang) {
-            $roles['name.' . $lang] = 'required|unique:cities,name->' . $lang . ',NULL,id,deleted_at,NULL';
-        }
-
-        $roles = array_merge($roles, [
-            'status'  => 'required|in:0,1',
-            'city_id' => 'nullable|exists:cities,id',
-        ]);
+        $roles = [
+            'name'    => 'required|string|unique:tenant.areas,name,NULL,id,deleted_at,NULL',
+            'city_id' => 'required|exists:tenant.cities,id',
+        ];
 
         return $roles;
     }
@@ -34,18 +28,13 @@ class StoreRequest extends FormRequest
      */
     public function messages()
     {
-        $messages = [];
-
-        foreach (config('myConfig.langs') as $lang) {
-            $messages['name.' . $lang . '.required'] = __('validation.required', ['attribute' => __('area::areas.name') . ' (' . $lang . ')']);
-            $messages['name.' . $lang . '.unique']   = __('validation.unique', ['attribute' => __('area::areas.name') . ' (' . $lang . ')']);
-        }
-
-        $messages = array_merge($messages, [
-            'status.required' => __('validation.required', ['attribute' => __('area::areas.status')]),
-            'status.in'       => __('validation.in', ['attribute' => __('area::areas.status')]),
-            'city_id.exists'  => __('validation.exists', ['attribute' => __('area::areas.city')]),
-        ]);
+        $messages = [
+            'name.required'    => trans('validation.required'),
+            'name.string'      => trans('validation.string'),
+            'name.unique'      => trans('validation.unique'),
+            'city_id.required' => trans('validation.required'),
+            'city_id.exists'   => trans('validation.exists'),
+        ];
 
         return $messages;
     }

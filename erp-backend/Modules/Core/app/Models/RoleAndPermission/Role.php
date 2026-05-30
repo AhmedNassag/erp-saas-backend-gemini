@@ -8,10 +8,13 @@ use Laravel\Scout\Searchable;
 use Spatie\Permission\Models\Role as MasterRole;
 use App\Traits\ActivityLogTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Core\Models\User\User;
 
 class Role extends MasterRole
 {
-    use HasFactory ,Searchable,HasTranslations, SoftDeletes;
+    protected $connection = 'tenant';
+
+    use HasFactory ,Searchable, SoftDeletes/*, HasTranslations*/;
 
     use ActivityLogTrait;
 
@@ -20,30 +23,21 @@ class Role extends MasterRole
      */
     protected $fillable  = [];
     protected $guarded   = ['id'];
-    public $translatable = ['name'];
-
-    protected $casts = [
-        'name' => 'json'
-    ];
-
-    public function getAttribute($key)
-    {
-        if( in_array($key , $this->translatable)){
-            $language = request()->header('Accept-Language', 'en'); // Default to English if Accept-Language header is not provided
-            return $this->getTranslation($key, $language) ?? parent::getAttribute($key);
-        }else{
-            return parent::getAttribute($key);
-        }
-    }
 
     ////////////////////////////// start search with relations models //////////////////////////////
     public function toSearchableArray(): array
     {
-        $array = [];
-        foreach (config('myConfig.langs') as $locale) {
-            $array['name->' . $locale] = $this->getTranslation('name', $locale);
-        }
-        return $array;
+        return [
+            'name' => $this->name,
+        ];
     }
     ////////////////////////////// end search with relations models //////////////////////////////
+
+
+
+    //start relations
+    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'user_ids');
+    }
 }

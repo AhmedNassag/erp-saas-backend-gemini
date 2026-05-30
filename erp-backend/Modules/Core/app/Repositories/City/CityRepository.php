@@ -1,19 +1,17 @@
-﻿<?php
+<?php
 
 namespace Modules\Core\Repositories\City;
 
-use App\Http\Responses\ApiResponse;
 use App\Traits\API;
-use App\Repositories\BaseRepository;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Modules\Core\Models\City\City;
 use Modules\Core\Repositories\City\CityInterface;
 use Modules\Core\Resources\City\CityResource;
 
-class CityRepository extends BaseRepository implements CityInterface
+class CityRepository implements CityInterface
 {
-    public function getModel()
+    public function getModel(): \Illuminate\Database\Eloquent\Model
     {
         return new City();
     }
@@ -22,9 +20,9 @@ class CityRepository extends BaseRepository implements CityInterface
 
     public function index($request, $filter): \Illuminate\Http\JsonResponse
     {
-        $perPage = $request['per_page'] ?? config('myConfig.paginationCount');
+        $perPage    = $request['per_page'] ?? config('myConfig.paginationCount');
         $collection = $this->getModel()->ordering($request->ordering)->filter($filter);
-        $data = $perPage == -1 ? $collection->get() : $collection->paginate($perPage);
+        $data       = $perPage == -1 ? $collection->where('status', 1)->get() : $collection->paginate($perPage);
 
         return (new API)
             ->isOk(__('Cities'))
@@ -34,8 +32,9 @@ class CityRepository extends BaseRepository implements CityInterface
 
 
 
-    public function show($city)
+    public function show($id, array $with = [])
     {
+        $city = $this->getModel()->with($with)->findOrFail($id);
         return (new API)
             ->isOk(__('City Data'))
             ->setData(CityResource::make($city))
@@ -48,7 +47,6 @@ class CityRepository extends BaseRepository implements CityInterface
     {
         try {
             $city = $this->getModel()->create($request->validated());
-            //save image with city object
 
             return (new API)
                 ->isOk(__('Stored Successfully'))
@@ -63,11 +61,11 @@ class CityRepository extends BaseRepository implements CityInterface
 
 
 
-    public function update($city, $request)
+    public function update($id, $request)
     {
         try {
+            $city = $this->getModel()->findOrFail($id);
             $city->update($request->validated());
-            //save new image with city object and delete old image
 
             return (new API)
                 ->isOk(__('Updated Successfully'))
@@ -82,11 +80,25 @@ class CityRepository extends BaseRepository implements CityInterface
 
 
 
-    public function destroy($city)
+    public function destroy($id)
     {
+        $city = $this->getModel()->findOrFail($id);
         $city->delete();
+        
         return (new API)
             ->isOk(__('Destroyed Successfully'))
+            ->build();
+    }
+
+
+
+    public function changeStatus($id, $request)
+    {
+        $city = $this->getModel()->findOrFail($id);
+        $city->update(['status' => $request->status]);
+
+        return (new API)
+            ->isOk(__('Status Changed Successfully'))
             ->build();
     }
 }

@@ -4,13 +4,15 @@ namespace Modules\Core\Repositories\City;
 
 interface CityInterface
 {
-    public function index($request,$filter);
+    public function index($request, $filter);
 
-    public function show($city);
+    public function show($id);
 
     public function store($request);
 
-    public function update($city , $request);
+    public function update($id, $request);
 
-    public function destroy($city);
+    public function destroy($id);
+
+    public function changeStatus($id, $request);
 }

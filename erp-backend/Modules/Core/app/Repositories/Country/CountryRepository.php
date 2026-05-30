@@ -1,35 +1,44 @@
-﻿<?php
+<?php
 
 namespace Modules\Core\Repositories\Country;
 
-use App\Http\Responses\ApiResponse;
 use App\Traits\API;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Repositories\BaseRepository;
 use Modules\Core\Models\Country\Country;
 use Modules\Core\Repositories\Country\CountryInterface;
 use Modules\Core\Resources\Country\CountryResource;
 
-class CountryRepository extends BaseRepository implements CountryInterface
+class CountryRepository implements CountryInterface
 {
-    public function getModel()
+    public function getModel(): \Illuminate\Database\Eloquent\Model
     {
         return new Country();
     }
 
 
 
-    public function index($request): \Illuminate\Http\JsonResponse
+    public function index($request, $filter): \Illuminate\Http\JsonResponse
     {
-        $perPage = $request['per_page'] ?? config('myConfig.paginationCount');
-        $data    = $perPage == -1 ? $this->getModel()->search($request['search'])->orderBy('created_at', 'desc')->get() : $this->getModel()->search($request['search'])->orderBy('created_at', 'desc')->paginate($perPage);
+        $perPage    = $request['per_page'] ?? config('myConfig.paginationCount');
+        $collection = $this->getModel()->ordering($request->ordering)->filter($filter);
+        $data       = $perPage == -1 ? $collection->where('status', 1)->get() : $collection->paginate($perPage);
 
         return (new API)
             ->isOk(__('Countries'))
-            ->setData($perPage == -1 ? CountryResource::collection($data) : (new API)->api_model_set_paginate(CountryResource::collection($data) ,$data))
+            ->setData($perPage == -1 ? CountryResource::collection($data) : (new API)->api_model_set_paginate(CountryResource::collection($data), $data))
             ->build();
+    }
 
+
+
+    public function show($id, array $with = [])
+    {
+        $country = $this->getModel()->with($with)->findOrFail($id);
+        return (new API)
+            ->isOk(__('Country Data'))
+            ->setData(CountryResource::make($country))
+            ->build();
     }
 
 
@@ -38,20 +47,6 @@ class CountryRepository extends BaseRepository implements CountryInterface
     {
         try {
             $country = $this->getModel()->create($request->validated());
-
-            //save image with country object
-            if ($request->hasFile('image')) {
-                $country->addMediaFromRequest('image')->toMediaCollection('country');
-            }
-
-            if ($request->hasFile('images')) {
-                if ($images = $request->file('images')) {
-                    $country->clearMediaCollection('images');
-                    foreach ($images as $image) {
-                        $country->addMedia($image)->toMediaCollection('images');
-                    }
-                }
-            }
 
             return (new API)
                 ->isOk(__('Stored Successfully'))
@@ -66,33 +61,11 @@ class CountryRepository extends BaseRepository implements CountryInterface
 
 
 
-    public function show($country)
-    {
-        return (new API)
-            ->isOk(__('Country Data'))
-            ->setData(CountryResource::make($country))
-            ->build();
-    }
-
-
-
-    public function update($country ,$request)
+    public function update($id, $request)
     {
         try {
+            $country = $this->getModel()->findOrFail($id);
             $country->update($request->validated());
-
-            //save new image with country object and delete old image
-            if ($request->hasFile('image')) {
-                $file_name = $country->getMedia('country')->last()->file_name;
-                $img_id = $country->getMedia('country')->last()->id;
-                if($img_id && $file_name) {
-                    if (File::exists(public_path('storage/'. $img_id .'/'.$file_name))) {
-                        unlink(public_path('storage/' . $img_id .'/'.$file_name));
-                    }
-                }
-                Media::find($country->getMedia('country')->last()->id)->delete();
-                $country->addMediaFromRequest('image')->toMediaCollection('country');
-            }
 
             return (new API)
                 ->isOk(__('Updated Successfully'))
@@ -107,22 +80,25 @@ class CountryRepository extends BaseRepository implements CountryInterface
 
 
 
-    public function destroy($country)
+    public function destroy($id)
     {
-        $file_name = $country->getMedia('country')->last()->file_name ?? null;
-        $img_id    = $country->getMedia('country')->last()->id ?? null;
-        if($img_id && $file_name) {
-            if (File::exists(public_path('storage/'. $img_id .'/'.$file_name))) {
-                unlink(public_path('storage/' . $img_id .'/'.$file_name));
-            }
-        }
-        if($img_id) {
-            Media::find($country->getMedia('country')->last()->id)->delete();
-        }
+        $country = $this->getModel()->findOrFail($id);
         $country->delete();
-
+        
         return (new API)
             ->isOk(__('Destroyed Successfully'))
+            ->build();
+    }
+
+
+
+    public function changeStatus($id, $request)
+    {
+        $country = $this->getModel()->findOrFail($id);
+        $country->update(['status' => $request->status]);
+
+        return (new API)
+            ->isOk(__('Status Changed Successfully'))
             ->build();
     }
 }

@@ -4,7 +4,9 @@ namespace Modules\Landlord\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Modules\Landlord\Listeners\CreateTenantDatabaseListener;
+use Modules\Core\Models\RoleAndPermission\Role;
 
 class LandlordDatabaseSeeder extends Seeder
 {
@@ -55,6 +57,39 @@ class LandlordDatabaseSeeder extends Seeder
         $listener = new CreateTenantDatabaseListener();
         $listener->handle($tenant);
 
-        $this->command->info('4. Success! Check your MySQL Server right now.');
+        // 4. إنشاء المستخدم الأول (Admin) في قاعدة العميل
+        $this->command->info('4. Creating admin user for tenant...');
+
+        config(['database.connections.tenant.database' => $tenant->database]);
+        DB::purge('tenant');
+        DB::reconnect('tenant');
+
+        if (DB::connection('tenant')->getSchemaBuilder()->hasTable('users')) {
+            $userEmail = 'admin@alpha.com';
+
+            DB::connection('tenant')->table('users')->updateOrInsert(
+                ['email' => $userEmail],
+                [
+                    'name'       => 'Admin',
+                    'password'   => Hash::make('12345678'),
+                    'role'       => 'admin',
+                    'updated_at' => now(),
+                    'created_at' => now(),
+                ]
+            );
+
+            // تعيين صلاحية Admin
+            $userId = DB::connection('tenant')->table('users')->where('email', $userEmail)->value('id');
+            $roleId = DB::connection('tenant')->table('roles')->where('name', 'Admin')->where('guard_name', 'tenant')->value('id');
+
+            if ($userId && $roleId) {
+                DB::connection('tenant')->table('model_has_roles')->updateOrInsert(
+                    ['model_id' => $userId, 'model_type' => 'App\Models\User', 'role_id' => $roleId],
+                    ['role_id' => $roleId]
+                );
+            }
+        }
+
+        $this->command->info('5. Done! Tenant [alpha.erp.test:8000] ready — login with admin@alpha.com / 12345678');
     }
 }

@@ -11,16 +11,10 @@ class UpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $roles = [];
-
-        foreach (config('myConfig.langs') as $lang) {
-            $roles['name.' . $lang] = 'required|unique:cities,name->' . $lang . ',' . $this->city->id . 'NULL,id,deleted_at,NULL';
-        }
-
-        $roles = array_merge($roles, [
-            'status' => 'required|in:0,1',
-            'country_id' => 'required|exists:countries,id',
-        ]);
+        $roles = [
+            'name'       => 'required|string|unique:tenant.cities,name,'.$this->id.',id,deleted_at,NULL',
+            'country_id' => 'required|exists:tenant.countries,id',
+        ];
 
         return $roles;
     }
@@ -33,18 +27,13 @@ class UpdateRequest extends FormRequest
      */
     public function messages()
     {
-        $messages = [];
-
-        foreach (config('myConfig.langs') as $lang) {
-            $messages['name.' . $lang . '.required'] = __('validation.required', ['attribute' => __('city::cities.name') . ' (' . $lang . ')']);
-            $messages['name.' . $lang . '.unique']   = __('validation.unique', ['attribute' => __('city::cities.name') . ' (' . $lang . ')']);
-        }
-
-        $messages = array_merge($messages, [
-            'status.required'   => __('validation.required', ['attribute' => __('city::cities.status')]),
-            'status.in'         => __('validation.in', ['attribute' => __('city::cities.status')]),
-            'country_id.exists' => __('validation.exists', ['attribute' => __('city::cities.country')]),
-        ]);
+        $messages = [
+            'name.required'       => trans('validation.required'),
+            'name.string'         => trans('validation.string'),
+            'name.unique'         => trans('validation.unique'),
+            'country_id.required' => trans('validation.required'),
+            'country_id.exists'   => trans('validation.exists'),
+        ];
 
         return $messages;
     }

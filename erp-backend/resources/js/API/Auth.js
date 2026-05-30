@@ -1,0 +1,51 @@
+import axios from 'axios'
+
+const baseURL = import.meta.env.VITE_API_URL || window.location.origin
+
+export class Auth {
+  static USER = null
+
+  static async logIn(email, password) {
+    const response = await axios.post(`${baseURL}/api/login`, { email, password })
+    const data = response.data
+    if (data.token) {
+      localStorage.setItem('api_token', data.token)
+      Auth.USER = data.user
+    }
+    return data
+  }
+
+  static getToken() {
+    return localStorage.getItem('api_token')
+  }
+
+  static loggedIn() {
+    return !!Auth.getToken()
+  }
+
+  static logOut() {
+    localStorage.removeItem('api_token')
+    Auth.USER = null
+    window.location.href = '/login'
+  }
+
+  static run() {
+    axios.defaults.baseURL = baseURL
+    axios.interceptors.request.use((config) => {
+      const token = Auth.getToken()
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+      return config
+    })
+    axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          Auth.logOut()
+        }
+        return Promise.reject(error)
+      }
+    )
+  }
+}

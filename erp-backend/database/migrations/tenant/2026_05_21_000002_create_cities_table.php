@@ -18,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('country_id'); 
             $table->foreign('country_id')->references('id')->on('countries');
             $table->index('name');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

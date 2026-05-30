@@ -3,12 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Tenant\Api\AuthController as TenantAuthController;
 use App\Http\Controllers\Tenant\Api\DashboardController;
-use App\Http\Controllers\SuperAdmin\Api\AuthController as SuperAdminAuthController;
-use App\Http\Controllers\SuperAdmin\Api\CmsController;
-use App\Http\Controllers\SuperAdmin\Api\StatsController;
-use App\Http\Controllers\SuperAdmin\Api\TenantController;
-use App\Http\Controllers\SuperAdmin\Api\PackageController;
-use App\Http\Controllers\Public\PortfolioApiController;
+use Modules\Landlord\Http\Controllers\SuperAdmin\Api\AuthController as SuperAdminAuthController;
+use Modules\Landlord\Http\Controllers\SuperAdmin\Api\CmsController;
+use Modules\Landlord\Http\Controllers\SuperAdmin\Api\StatsController;
+use Modules\Landlord\Http\Controllers\SuperAdmin\Api\TenantController;
+use Modules\Landlord\Http\Controllers\SuperAdmin\Api\PackageController;
+use Modules\Landlord\Http\Controllers\Public\PortfolioApiController;
 
 // =============================================================================
 // 🏰 Central Admin Routes (erp.test/api/admin/...)

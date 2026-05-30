@@ -13,7 +13,7 @@ class BranchDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $actions = ['read', 'create', 'show', 'update', 'delete'];
+        $actions = ['read', 'create', 'show', 'update', 'delete', 'changeStatus'];
         $models  = ['branch' => 'Core'];
 
         $this->createOrUpdatePermissions($models, $actions);

@@ -18,6 +18,9 @@ class DatabaseSeeder extends Seeder
 
             // 2. Super Admin account (صاحب المشروع)
             SuperAdminSeeder::class,
+
+            // 3. Languages & Translations (en, ar, fr)
+            LanguageTranslationSeeder::class,
         ]);
     }
 }

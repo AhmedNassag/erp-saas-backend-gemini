@@ -4,13 +4,15 @@ namespace Modules\Core\Repositories\Country;
 
 interface CountryInterface
 {
-    public function index($request);
+    public function index($request, $filter);
  
     public function store($request);
  
-    public function show($country);
+    public function show($id);
 
-    public function update($country, $request);
+    public function update($id, $request);
     
-    public function destroy($country);
+    public function destroy($id);
+
+    public function changeStatus($id, $request);
 }

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 namespace Modules\Core\Repositories\RoleAndPermission;
 
@@ -7,14 +7,14 @@ use App\Traits\API;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
-use App\Repositories\BaseRepository;
+use Modules\Landlord\Repositories\BaseRepository;
 use Modules\Core\Models\RoleAndPermission\Permission;
 use Modules\Core\Repositories\RoleAndPermission\PermissionInterface;
-use Modules\Core\Resources\RoleAndPermission\PermissionsResource;
+use Modules\Core\Resources\RoleAndPermission\PermissionResource;
 
-class PermissionRepository extends BaseRepository implements PermissionInterface
+class PermissionRepository implements PermissionInterface
 {
-    public function getModel()
+    public function getModel(): \Illuminate\Database\Eloquent\Model
     {
         return new Permission();
     }
@@ -51,7 +51,7 @@ class PermissionRepository extends BaseRepository implements PermissionInterface
                 $item = explode('-', $one->name);
                 $action = array_shift($item);
                 $model = implode('-', $item);
-                $new_data[$model][$action] = new PermissionsResource($one);
+                $new_data[$model][$action] = new PermissionResource($one);
             }
         }
 
@@ -60,7 +60,7 @@ class PermissionRepository extends BaseRepository implements PermissionInterface
             ->setData(
                 $perPage == -1
                     ? $new_data
-                    : (new API)->api_model_set_paginate(PermissionsResource::collection($data), $data)
+                    : (new API)->api_model_set_paginate(PermissionResource::collection($data), $data)
             )
             ->build();
     }

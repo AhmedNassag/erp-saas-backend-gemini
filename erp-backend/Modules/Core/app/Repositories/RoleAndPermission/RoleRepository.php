@@ -1,22 +1,21 @@
-﻿<?php
-
+<?php
 namespace Modules\Core\Repositories\RoleAndPermission;
 
 use App\Http\Responses\ApiResponse;
 use App\Traits\API;
 use App\Models\User;
-use App\Repositories\BaseRepository;
+use Modules\Landlord\Repositories\BaseRepository;
 use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Modules\Core\Models\RoleAndPermission\Role;
 use Modules\Core\Models\RoleAndPermission\Permission;
 use Modules\Core\Repositories\RoleAndPermission\RoleInterface;
-use Modules\Core\Resources\RoleAndPermission\RolesResource;
+use Modules\Core\Resources\RoleAndPermission\RoleResource;
 
-class RoleRepository extends BaseRepository implements RoleInterface
+class RoleRepository implements RoleInterface
 {
 
-    public function getModel()
+    public function getModel(): \Illuminate\Database\Eloquent\Model
     {
         return new Role();
     }
@@ -30,7 +29,7 @@ class RoleRepository extends BaseRepository implements RoleInterface
 
         return (new API)
             ->isOk(__('Roles'))
-            ->setData($perPage == -1 ? RolesResource::collection($data) : (new API)->api_model_set_paginate(RolesResource::collection($data) ,$data))
+            ->setData($perPage == -1 ? RoleResource::collection($data) : (new API)->api_model_set_paginate(RoleResource::collection($data) ,$data))
             ->build();
 
     }
@@ -41,7 +40,7 @@ class RoleRepository extends BaseRepository implements RoleInterface
     {
         return (new API)
             ->isOk(__('Role Data'))
-            ->setData(RolesResource::make($role))
+            ->setData(RoleResource::make($role))
             ->build();
     }
 
@@ -50,7 +49,9 @@ class RoleRepository extends BaseRepository implements RoleInterface
     public function store($request)
     {
         try {
-            $role = $this->getModel()->create($request->validated());
+            // append guard_name = 'tenant' to request validated data to be used in create role and assign permissions
+            $requestData = array_merge($request->validated(), ['guard_name' => 'tenant']);
+            $role = $this->getModel()->create($requestData);
 
             if($request->permission_ids){
                 $permissions = Permission::whereIN('id',$request->permission_ids)->pluck('name');

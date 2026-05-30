@@ -10,6 +10,8 @@ use Spatie\Permission\Models\Permission as MasterPermission;
 
 class Permission extends MasterPermission
 {
+    protected $connection = 'tenant';
+
     use HasFactory, Searchable;
 
     /**

@@ -15,7 +15,13 @@ use Modules\Core\Http\Controllers\City\CityController;
 */
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
-    Route::prefix('core')->name('city.')->group(function () {
-        Route::resource('/city', CityController::class);
+    Route::prefix('core/city')->name('city.')->group(function () {
+        // Route::resource('/', CityController::class);
+        Route::get('/', [CityController::class, 'index'])->name('index');
+        Route::post('/', [CityController::class, 'store'])->name('store');
+        Route::get('/{id}', [CityController::class, 'show'])->name('show');
+        Route::put('/{id}', [CityController::class, 'update'])->name('update');
+        Route::delete('/{id}', [CityController::class, 'destroy'])->name('destroy');
+        Route::post('/change-status/{id}', [CityController::class, 'changeStatus'])->name('change-status');
     });
 });

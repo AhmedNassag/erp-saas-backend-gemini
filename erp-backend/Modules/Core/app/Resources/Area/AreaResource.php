@@ -16,9 +16,9 @@ class AreaResource extends JsonResource
             'status'       => $this->status ?? null,
             'name'         => $this->name,
             'city_id'      => $this->city_id,
-            'city_name'    => $this->city->name ?? null,
-            'country_id'   => $this->city->country_id ?? null,
-            'country_name' => $this->city->country->name ?? null,
+            'city_name'    => $this->city?->name ?? null,
+            'country_id'   => $this->city?->country_id ?? null,
+            'country_name' => $this->city?->country?->name ?? null,
         ];
     }
 }

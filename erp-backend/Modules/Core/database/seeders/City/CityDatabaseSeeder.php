@@ -17,7 +17,7 @@ class CityDatabaseSeeder extends Seeder
     public function run(): void
     {
         // Permissions Seeder (keep as is)
-        $actions = ['read', 'create', 'show', 'update', 'delete'];
+        $actions = ['read', 'create', 'show', 'update', 'delete', 'changeStatus'];
         $models  = ['city' => 'Core'];
 
         $this->createOrUpdatePermissions($models, $actions);

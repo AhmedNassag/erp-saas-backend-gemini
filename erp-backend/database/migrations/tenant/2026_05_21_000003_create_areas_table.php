@@ -18,8 +18,8 @@ return new class extends Migration
             $table->unsignedBigInteger('city_id'); 
             $table->foreign('city_id')->references('id')->on('cities');
             $table->index('name');
-            $table->softDeletes();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
