@@ -9,8 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-                $table->string('role_ids')->nullable();
-                $table->unsignedBigInteger('department_id')->nullable();
+                $table->unsignedBigInteger('department_id')->nullable()->after('status');
                 $table->foreign('department_id')->references('id')->on('departments')->onDelete('set null');
             });
     }
@@ -19,7 +18,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['department_id']);
-            $table->dropColumn(['role_ids', 'department_id']);
+            $table->dropColumn(['department_id']);
         });
     }
 };

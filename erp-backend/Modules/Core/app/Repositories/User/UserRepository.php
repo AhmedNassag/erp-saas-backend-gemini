@@ -48,9 +48,9 @@ class UserRepository implements UserInterface
     public function store($request)
     {
         try {
-            $data = $request->validated();
+            $data    = $request->validated();
             $roleIds = $data['role_ids'] ?? [];
-            unset($data['role_ids']);
+
             $data['password'] = Hash::make($data['password']);
 
             $user = $this->getModel()->create($data);
@@ -75,9 +75,8 @@ class UserRepository implements UserInterface
     public function update($id, $request)
     {
         try {
-            $data = $request->validated();
+            $data    = $request->validated();
             $roleIds = $data['role_ids'] ?? [];
-            unset($data['role_ids']);
 
             if (empty($data['password'])) {
                 unset($data['password']);

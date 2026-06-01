@@ -17,10 +17,9 @@ return new class extends Migration
             $table->string('name'); // اسم الموظف/المستخدم في الشركة
             $table->string('email')->unique(); // إيميله للدخول
             $table->string('password'); // الباسورد
-            // $table->string('role_ids')->nullable(); // عشان نربط المستخدم بأدواره (مثلاً: "1,2" لو عنده دورين)
             // $table->unsignedBigInteger('department_id')->nullable(); // ربط المستخدم بفرع معين
             // $table->foreign('department_id')->references('id')->on('departments')->onDelete('set null'); 
-            $table->enum('role', ['Admin', 'Manager', 'Employee'])->default('Employee'); // دور الموظف
+            $table->string('role')->nullable();; // دور الموظف
             $table->boolean('status')->default(1); // حالة المستخدم (نشط/غير نشط)
             $table->rememberToken();
             $table->timestamps();

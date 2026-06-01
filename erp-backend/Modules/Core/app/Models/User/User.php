@@ -44,7 +44,6 @@ class User extends TenantBaseModel implements HasMedia
         'email',
         'password',
         'department_id',
-        'role_ids',
     ];
 
     public function scopeStatus($query)
