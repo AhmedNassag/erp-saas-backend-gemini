@@ -5,6 +5,7 @@ namespace Modules\Core\Repositories\User;
 use App\Traits\API;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Modules\Core\Models\User\User;
 use Modules\Core\Repositories\User\UserInterface;
@@ -47,10 +48,15 @@ class UserRepository implements UserInterface
     public function store($request)
     {
         try {
-            $user = $this->getModel()->create($request->validated());
+            $data = $request->validated();
+            $roleIds = $data['role_ids'] ?? [];
+            unset($data['role_ids']);
+            $data['password'] = Hash::make($data['password']);
 
-            if ($request->role_ids) {
-                $this->syncRoles($user, $request->role_ids);
+            $user = $this->getModel()->create($data);
+
+            if ($roleIds) {
+                $this->syncRoles($user, $roleIds);
             }
 
             return (new API)
@@ -58,7 +64,7 @@ class UserRepository implements UserInterface
                 ->build();
         } catch (\Exception $e) {
             return (new API)
-                ->isError('An Error occured')
+                ->isError($e->getMessage())
                 ->setStatus(500)
                 ->build();
         }
@@ -69,19 +75,27 @@ class UserRepository implements UserInterface
     public function update($id, $request)
     {
         try {
-            $user = $this->getModel()->findOrFail($id);
-            $user->update($request->validated());
+            $data = $request->validated();
+            $roleIds = $data['role_ids'] ?? [];
+            unset($data['role_ids']);
 
-            if ($request->role_ids) {
-                $this->syncRoles($user, $request->role_ids);
+            if (empty($data['password'])) {
+                unset($data['password']);
+            } else {
+                $data['password'] = Hash::make($data['password']);
             }
+
+            $user = $this->getModel()->findOrFail($id);
+            $user->update($data);
+
+            $this->syncRoles($user, $roleIds);
 
             return (new API)
                 ->isOk(__('Updated Successfully'))
                 ->build();
         } catch (\Exception $e) {
             return (new API)
-                ->isError('An Error occured')
+                ->isError($e->getMessage())
                 ->setStatus(500)
                 ->build();
         }

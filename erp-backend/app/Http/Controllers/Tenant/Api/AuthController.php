@@ -34,15 +34,16 @@ class AuthController extends Controller
 
         // 3. الرد بالـ JSON النظيف للـ Vue 3
         return response()->json([
-            'status'  => 'success',
-            'message' => 'تم تسجيل الدخول بنجاح',
-            'token'   => $authData['token'],
-            'user'    => [
+            'status'      => 'success',
+            'message'     => 'تم تسجيل الدخول بنجاح',
+            'token'       => $authData['token'],
+            'user'        => [
                 'id'    => $authData['user']->id,
                 'name'  => $authData['user']->name,
                 'email' => $authData['user']->email,
-                'role'  => $authData['user']->role,
-            ]
+                'roles' => $authData['user']->roles,
+            ],
+            'permissions' => $authData['permissions'],
         ], 200);
     }
 

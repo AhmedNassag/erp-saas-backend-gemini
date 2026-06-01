@@ -17,7 +17,7 @@ class UserResource extends JsonResource
             'status'  => $this->status ?? null,
             'name'    => $this->name,
             'email'   => $this->email,
-            // 'roles'   => RoleResource::collection($this->roles ?? $this->roles),
+            'roles'   => RoleResource::collection($this->roles ?? []),
             // 'profile' => $this->whenLoaded('employeeProfile', function () {
             //     return new EmployeeProfileResource($this->employeeProfile);
             // }),

@@ -19,7 +19,7 @@ config(['database.connections.tenant.database' => $dbName]);
 DB::purge('tenant');
 DB::reconnect('tenant');
 
-$user = User::where('role', 'admin')->first();
+$user = User::where('role', 'Admin')->first();
 
 if (!$user) {
     echo "No admin user found in $dbName\n";

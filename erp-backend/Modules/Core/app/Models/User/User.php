@@ -43,8 +43,8 @@ class User extends TenantBaseModel implements HasMedia
         'status',
         'email',
         'password',
-        'role',
-        'role_ids'
+        'department_id',
+        'role_ids',
     ];
 
     public function scopeStatus($query)
@@ -94,8 +94,8 @@ class User extends TenantBaseModel implements HasMedia
         // return $this->hasOne(Employee::class);
     }
 
-    public function roles()
+    public function roles(): \Illuminate\Database\Eloquent\Relations\MorphToMany
     {
-        return $this->belongsToMany(Role::class, 'role_ids');
+        return $this->morphToMany(Role::class, 'model', 'model_has_roles', 'model_id', 'role_id');
     }
 }

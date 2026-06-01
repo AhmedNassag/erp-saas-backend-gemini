@@ -37,7 +37,7 @@ class DashboardController extends Controller
                 'user'               => [
                     'name'  => $user->name,
                     'email' => $user->email,
-                    'role'  => $user->role,
+                    'roles' => $user->roles,
                 ],
                 'stats'              => [
                     'active_users_count' => 1,

@@ -9,7 +9,7 @@
     <div class="app-sidebar-menu overflow-hidden flex-column-fluid">
       <div class="app-sidebar-wrapper hover-scroll-overlay-y my-5 mx-3" id="kt_app_sidebar_menu_wrapper" data-kt-scroll="true" data-kt-scroll-height="auto" data-kt-scroll-dependencies="#kt_app_sidebar_logo" data-kt-scroll-wrappers="#kt_app_sidebar_menu" data-kt-scroll-offset="5px">
         <div class="menu menu-column menu-rounded menu-sub-indention fw-semibold px-1" id="#kt_app_sidebar_menu" data-kt-menu="true">
-          <template v-for="(section, sIndex) in menuStore.data" :key="sIndex">
+          <template v-for="(section, sIndex) in filteredMenu" :key="sIndex">
             <div class="menu-item pt-5">
               <div class="menu-content">
                 <span class="menu-heading fw-bold text-uppercase fs-7">{{ section.section }}</span>
@@ -30,6 +30,7 @@
 
 <script>
 import { useMenuStore } from '../store/menu'
+import { useAuthStore } from '../store/auth'
 import { useRoute } from 'vue-router'
 import { useMetronic } from '../composables/useMetronic'
 
@@ -37,8 +38,21 @@ export default {
   name: 'SidebarComponent',
   setup() {
     const menuStore = useMenuStore()
+    const authStore = useAuthStore()
     const route = useRoute()
-    return { menuStore, route }
+    return { menuStore, authStore, route }
+  },
+  computed: {
+    filteredMenu() {
+      return this.menuStore.data
+        .map(section => ({
+          ...section,
+          items: section.items.filter(item =>
+            !item.permission || this.authStore.userPermissions.includes(item.permission)
+          )
+        }))
+        .filter(section => section.items.length > 0)
+    }
   },
   methods: {
     isActive(path) {

@@ -4,13 +4,16 @@ const baseURL = import.meta.env.VITE_API_URL || window.location.origin
 
 export class Auth {
   static USER = null
+  static PERMISSIONS = []
 
   static async logIn(email, password) {
     const response = await axios.post(`${baseURL}/api/login`, { email, password })
     const data = response.data
     if (data.token) {
       localStorage.setItem('api_token', data.token)
+      localStorage.setItem('user_permissions', JSON.stringify(data.permissions || []))
       Auth.USER = data.user
+      Auth.PERMISSIONS = data.permissions || []
     }
     return data
   }
@@ -25,12 +28,20 @@ export class Auth {
 
   static logOut() {
     localStorage.removeItem('api_token')
+    localStorage.removeItem('user_permissions')
     Auth.USER = null
+    Auth.PERMISSIONS = []
     window.location.href = '/login'
   }
 
   static run() {
     axios.defaults.baseURL = baseURL
+
+    const perms = localStorage.getItem('user_permissions')
+    if (perms) {
+      Auth.PERMISSIONS = JSON.parse(perms)
+    }
+
     axios.interceptors.request.use((config) => {
       const token = Auth.getToken()
       if (token) {

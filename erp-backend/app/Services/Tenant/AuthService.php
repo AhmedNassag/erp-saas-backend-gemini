@@ -30,8 +30,9 @@ class AuthService
         $token = $user->createToken($dto->device_name)->plainTextToken;
 
         return [
-            'token' => $token,
-            'user'  => $user,
+            'token'       => $token,
+            'user'        => $user,
+            'permissions' => $user->getAllPermissions()->pluck('name'),
         ];
     }
 }

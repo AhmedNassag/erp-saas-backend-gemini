@@ -80,7 +80,6 @@
                   <div class="fv-row mb-7">
                     <label class="fs-6 fw-semibold mb-2" :class="{ required: !editingId }">Password</label>
                     <input type="password" v-model="form.password" class="form-control form-control-solid" :required="!editingId" :placeholder="editingId ? 'Leave empty to keep current' : ''" />
-                    <div v-if="form.password" class="text-muted fs-7 mt-1">Will be hashed before saving</div>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -124,13 +123,6 @@ import User from '../../../API/Modules/Core/User/User'
 import API from '../../../API/API'
 import Swal from 'sweetalert2'
 import { notify } from '@kyvg/vue3-notification'
-
-async function sha256(str) {
-  const encoder = new TextEncoder()
-  const data = encoder.encode(str)
-  const hash = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('')
-}
 
 export default {
   name: 'UsersView',
@@ -187,8 +179,7 @@ export default {
         fd.append('name', this.form.name)
         fd.append('email', this.form.email)
         if (this.form.password) {
-          const hashed = await sha256(this.form.password)
-          fd.append('password', hashed)
+          fd.append('password', this.form.password)
         }
         this.form.role_ids.forEach(id => fd.append('role_ids[]', id))
         if (this.form.department_id) fd.append('department_id', this.form.department_id)
@@ -197,8 +188,12 @@ export default {
         notify({ text: this.editingId ? 'User updated' : 'User created', type: 'success' })
         this.modal.hide()
         this.loadItems()
-      } catch (e) { notify({ text: e.response?.data?.message || 'Error saving user', type: 'error' }) }
-      finally { this.saving = false }
+      } catch (e) {
+        notify({ text: e.response?.data?.message || 'Error saving user', type: 'error' })
+      }
+      finally {
+        this.saving = false
+      }
     },
     async deleteItem(id) {
       if ((await Swal.fire({ title: 'Delete User?', text: 'This action cannot be undone.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete' })).isConfirmed) {

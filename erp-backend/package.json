@@ -24,6 +24,7 @@
         "@kyvg/vue3-notification": "^3.4.1",
         "@vee-validate/rules": "^4.15.0",
         "bootstrap": "^5.3.3",
+        "crypto-js": "^4.2.0",
         "feather-icons": "^4.29.2",
         "jquery": "^3.7.1",
         "pinia": "^2.1.7",

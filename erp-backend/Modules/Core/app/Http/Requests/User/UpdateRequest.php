@@ -13,9 +13,9 @@ class UpdateRequest extends FormRequest
     {
         $roles = [
             'name'          => 'required|string',
-            'email'         => 'required|string|unique:tenant.users,email,'.$this->id.',id,deleted_at,NULL',
+            'email'         => 'required|email|unique:tenant.users,email,'.$this->id.',id,deleted_at,NULL',
             'password'      => 'nullable|string|min:8',
-            'role_ids'      => 'array|exists:tenant.roles,id',
+            'role_ids'      => 'required|array|exists:tenant.roles,id',
             'department_id' => 'nullable|exists:tenant.departments,id',
         ];
         
@@ -39,6 +39,7 @@ class UpdateRequest extends FormRequest
             'password.required'    => trans('validation.required'),
             'password.string'      => trans('validation.string'),
             'password.min'         => trans('validation.min'),
+            'role_ids.required'    => trans('validation.required'),
             'role_ids.array'       => trans('validation.array'),
             'role_ids.exists'      => trans('validation.exists'),
             'department_id.exists' => trans('validation.exists'),

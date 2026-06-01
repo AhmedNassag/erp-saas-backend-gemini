@@ -36,8 +36,8 @@ class Role extends MasterRole
 
 
     //start relations
-    public function users(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function users(): \Illuminate\Database\Eloquent\Relations\MorphToMany
     {
-        return $this->belongsToMany(User::class, 'user_ids');
+        return $this->morphToMany(User::class, 'model', 'model_has_roles', 'role_id', 'model_id');
     }
 }
