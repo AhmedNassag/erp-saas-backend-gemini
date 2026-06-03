@@ -1,0 +1,7 @@
+import API from "../API";
+
+export default class @@Name@@ extends API {
+  constructor() {
+    super('@@Namekebab@@')
+  }
+}

@@ -1,0 +1,112 @@
+<template>
+  <main-page ref="page" :mainPage="$t('@@name@@.@@name@@')" :subPage="$t('@@name@@.@@name@@')" :titlePage="$t('@@name@@.@@name@@')">
+    
+    <template #datatable>
+      <DataTable
+        ref="table"
+        id="@@name@@-table"
+        :tableClass="'table table-striped table-bordered'"
+        :columns="tableColumns"   
+        :api="api"  
+        :apiParams="apiParams"   
+        :editItem="editItem"  
+        :openForm="openForm"
+      >
+      </DataTable>
+    </template>
+  </main-page>
+  <!-- FormDialog -->
+  <FormDialog
+    v-model="dialogVisible"
+    :schema="fromFields"   
+    :new-item="newItem"   
+    :api="api"   
+    :close-form="closeFormDialog"   
+    :form-title="'@@name@@'"
+    :form-data="true"   
+    :dialog-width="800"
+    :persistent="true"
+    @close="handleDialogClose"
+  ></FormDialog>
+</template>
+
+<script>
+import @@Name@@ from "@/API/@@Name@@/@@Name@@";
+import MainPage from "@/components/MainPage.vue";
+import DataTable from "@/components/DataTable.vue";
+import FormDialog from "@/components/FormDialog.vue";
+
+export default {
+  components: {
+    MainPage,
+    DataTable,
+    FormDialog,
+  },
+
+  setup() {
+    const api = new @@Name@@();
+    const apiParams={};
+    const tableColumns = [];
+    const fromFields = [];
+
+    return {
+      api,
+      tableColumns,
+      fromFields,
+      apiParams
+    };
+  },
+ 
+  async mounted() {
+    // Fetch options for select fields if needed
+  },
+
+  data() {
+    return {
+      dialogVisible: false,
+      isReadonly: false,
+      newItem: {},
+    };
+  },
+
+  created() {
+    this.tableColumns = [
+@@TableColumns@@
+    ];
+
+    this.fromFields = [
+@@FormFields@@
+    ];
+  },
+
+  methods: {
+    openForm() {
+      this.dialogVisible = true;
+    },
+
+    closeForm() {
+      this.dialogVisible = false;
+      this.$refs.table.refreshTable();
+      this.newItem = {};
+    },
+    
+    closeFormDialog() {
+      this.dialogVisible = false;
+      this.$refs.table.refreshTable();
+      this.newItem = {};
+    },
+    
+    handleDialogClose() {
+      this.closeForm();
+    },
+
+    editItem(data) {
+      this.newItem = data;
+      this.dialogVisible = true;
+    },
+  },
+};
+</script>
+
+<style scoped>
+</style>

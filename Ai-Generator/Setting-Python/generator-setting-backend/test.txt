@@ -1,0 +1,123 @@
+<?php
+
+namespace Tests\Feature\@@Name@@;
+
+use App\Models\@@Name@@\@@Name@@;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+use PHPUnit\Framework\Attributes\Test;
+
+class @@Name@@ControllerTest extends TestCase
+{
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->clearDatabase();
+    }
+    
+
+
+    protected function clearDatabase(): void
+    {
+        DB::connection('mongodb')->getMongoClient()
+            ->selectDatabase(config('database.connections.mongodb.database'))
+            ->drop();
+    }
+
+    
+    
+    public function it_can_list_@@Namekebab@@s()
+    {
+        @@Name@@::insert([
+@@TestData@@
+        ]);
+
+        $response = $this->getJson(route('@@Namekebab@@.index'));
+
+        $response->assertOk();
+    }
+
+    
+
+    public function it_can_create_a_@@Namekebab@@()
+    {
+        $data = [
+@@TestData@@
+        ];
+
+        $response = $this->postJson(route('@@Namekebab@@.store'), $data);
+        
+        $response->assertOk();
+        $this->assertDatabaseHas((new @@Name@@())->getTable(), array_filter($data, fn($v) => $v !== null));
+    }
+
+    
+    
+    public function it_can_show_a_@@Namekebab@@()
+    {
+        $@@Namekebab@@ = @@Name@@::create([
+@@TestData@@
+        ]);
+
+        $response = $this->getJson(route('@@Namekebab@@.show', (string) $@@Namekebab@@->id));
+
+        $response->assertOk();
+        $response->assertJsonFragment(array_filter([
+@@TestData@@
+        ], fn($v) => $v !== null));
+    }
+
+    
+    
+    public function it_can_update_a_@@Namekebab@@()
+    {
+        $@@Namekebab@@ = @@Name@@::create([
+@@TestData@@
+        ]);
+        
+        $data = [
+@@UpdateTestData@@
+        ];
+
+        $response = $this->putJson(route('@@Namekebab@@.update', (string) $@@Namekebab@@->id), $data);
+
+        $response->assertOk();
+        $this->assertDatabaseHas((new @@Name@@())->getTable(), array_merge(
+            ['_id' => $@@Namekebab@@->id],
+            array_filter($data, fn($v) => $v !== null)
+        ));
+    }
+
+    
+    
+    public function it_can_soft_delete_a_@@Namekebab@@()
+    {
+        $@@Namekebab@@ = @@Name@@::create([
+@@TestData@@
+        ]);
+
+        $response = $this->deleteJson(route('@@Namekebab@@.destroy', (string) $@@Namekebab@@->id));
+
+        $response->assertOk();
+        $this->assertSoftDeleted((new @@Name@@())->getTable(), [
+            '_id' => $@@Namekebab@@->id,
+        ]);
+    }
+
+    
+
+    public function it_can_force_delete_a_@@Namekebab@@()
+    {
+        $@@Namekebab@@ = @@Name@@::create([
+@@TestData@@
+        ]);
+        
+        $@@Namekebab@@->delete();
+
+        $@@Namekebab@@->forceDelete();
+
+        $this->assertDatabaseMissing((new @@Name@@())->getTable(), [
+            '_id' => $@@Namekebab@@->id,
+        ]);
+    }
+}

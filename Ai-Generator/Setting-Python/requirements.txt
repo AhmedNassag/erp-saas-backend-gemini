@@ -1,0 +1,5 @@
+requests
+inquirer
+openai
+colorama
+python-dotenv

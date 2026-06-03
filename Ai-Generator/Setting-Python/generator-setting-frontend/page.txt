@@ -1,0 +1,99 @@
+<template>
+  <main-page ref="page" :isFlipped="isFlipped" :mainPage="$t('@@name@@.@@name@@')" :subPage="$t('@@name@@.@@name@@')" :titlePage="$t('@@name@@.@@name@@')">
+    
+    <template #datatable>
+      <DataTable
+        ref="table"
+        id="@@name@@-table"
+        :tableClass="'table table-striped table-bordered'"
+        :columns="tableColumns"   
+        :api="api"  
+        :apiParams="apiParams"   
+        :editItem="editItem"  
+        :openForm="openForm"
+      >
+      </DataTable>
+    </template>
+
+    <template #form>
+      <Form
+        :schema="fromFields"   
+        :newItem="newItem"   
+        :api="api"   
+        :closeForm="closeForm"   
+        :formData="true"   
+      ></Form>
+    </template>
+  </main-page>
+</template>
+
+<script>
+import @@Name@@ from "@/API/@@Name@@/@@Name@@";
+import Form from "@/components/Form.vue";
+import MainPage from "@/components/MainPage.vue";
+import DataTable from "@/components/DataTable.vue";
+
+export default {
+  components: {
+    MainPage,
+    Form,
+    DataTable,
+  },
+
+  setup() {
+    const api = new @@Name@@();
+    const apiParams={};
+    const tableColumns = [];
+    const fromFields = [];
+
+    return {
+      api,
+      tableColumns,
+      fromFields,
+      apiParams
+    };
+  },
+ 
+  async mounted() {
+    // Fetch options for select fields if needed
+  },
+
+  data() {
+    return {
+      isFlipped: false,
+      isReadonly: false,
+      newItem: {},
+    };
+  },
+
+  created() {
+    this.tableColumns = [
+@@TableColumns@@
+    ];
+
+    this.fromFields = [
+@@FormFields@@
+    ];
+  },
+
+  methods: {
+    openForm() {
+      this.isFlipped = true;
+    },
+
+    closeForm() {
+      this.isFlipped = false;
+      this.$refs.table.refreshTable();
+      this.newItem = {};
+    },
+
+    editItem(data) {
+      this.newItem = data;
+      this.isFlipped = true;
+    },
+  },
+};
+</script>
+
+<style scoped>
+</style>

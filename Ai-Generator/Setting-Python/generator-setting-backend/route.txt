@@ -1,0 +1,8 @@
+<?php
+
+use App\Http\Controllers\@@Name@@\@@Name@@Controller;
+use Illuminate\Support\Facades\Route;
+
+Route::middleware(['jwt.authentication'])->group(function () {
+    Route::resource('/@@Namekebab@@',  @@Name@@Controller::class);
+});

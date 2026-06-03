@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Services\Eloquent\@@Name@@;
+
+use App\Services\BaseService;
+use Illuminate\Http\Request;
+use App\Repositories\Eloquent\@@Name@@\@@Name@@Repository;
+
+class @@Name@@Service extends BaseService
+{
+    public function __construct()
+    {
+        parent::__construct(new @@Name@@Repository());
+    }
+    
+
+    
+    protected function validateData(Request $request, $type = 'store')
+    {
+        $validate = [];
+        
+        if ($type == 'store') {
+            $validate = [
+@@StoreValidation@@
+            ];
+        }
+        
+        if ($type == 'update') {
+            $validate = [
+@@UpdateValidation@@
+            ];
+        }
+        
+        $request->validate($validate);
+        return $request->all();
+    }
+}

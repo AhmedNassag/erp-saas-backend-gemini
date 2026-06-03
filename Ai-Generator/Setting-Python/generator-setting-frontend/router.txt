@@ -1,0 +1,10 @@
+export default [
+     {
+          path: '/@@Namekebab@@',
+          name: '@@Name@@',
+          component: () => import("@/views/Page/@@Name@@/@@Name@@.vue"),
+          meta: {
+               title: '#Default# | @@Name@@'
+          },
+     }
+];
