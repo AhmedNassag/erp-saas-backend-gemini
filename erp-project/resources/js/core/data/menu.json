@@ -37,6 +37,12 @@
         "permission": "read-branch"
       },
       {
+        "title": "Warehouses",
+        "icon": "ki-outline ki-box",
+        "route": "/core/warehouses",
+        "permission": "read-warehouse"
+      },
+      {
         "title": "Departments",
         "icon": "ki-outline ki-building",
         "route": "/core/departments",

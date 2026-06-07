@@ -1,0 +1,59 @@
+<?php
+
+namespace Modules\@@Module@@\Http\Controllers\@@Name@@;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Modules\@@Module@@\Filters\@@Name@@\@@Name@@Filter;
+use Modules\@@Module@@\Repositories\@@Name@@\@@Name@@Interface;
+use Modules\@@Module@@\Repositories\@@Name@@\@@Name@@Repository;
+use Modules\@@Module@@\Repositories\@@Name@@\@@Name@@StoreRequest;
+use Modules\@@Module@@\Repositories\@@Name@@\@@Name@@UpdateRequest;
+use Modules\@@Module@@\Repositories\@@Name@@\@@Name@@ChangeStatusRequest;
+
+class @@Name@@Controller extends Controller
+{
+    protected $@@name@@;
+
+    public function __construct(@@Name@@Interface $@@name@@)
+    {
+        $this->@@name@@ = $@@name@@;
+
+        $this->middleware('permission:read-@@NameKebab@@,tenant', ['only' => ['index']]);
+        $this->middleware('permission:show-@@NameKebab@@,tenant', ['only' => ['show']]);
+        $this->middleware('permission:create-@@NameKebab@@,tenant', ['only' => ['store']]);
+        $this->middleware('permission:update-@@NameKebab@@,tenant', ['only' => ['update']]);
+        $this->middleware('permission:delete-@@NameKebab@@,tenant', ['only' => ['destroy']]);
+        $this->middleware('permission:changeStatus-@@NameKebab@@,tenant', ['only' => ['changeStatus']]);
+    }
+
+    public function index(Request $request, @@Name@@Filter $filter)
+    {
+        return $this->@@name@@->index($request, $filter);
+    }
+
+    public function store(@@Name@@StoreRequest $request)
+    {
+        return $this->@@name@@->store($request);
+    }
+
+    public function show($id)
+    {
+        return $this->@@name@@->show($id);
+    }
+
+    public function update($id, @@Name@@UpdateRequest $request)
+    {
+        return $this->@@name@@->update($id, $request);
+    }
+
+    public function destroy($id)
+    {
+        return $this->@@name@@->destroy($id);
+    }
+
+    public function changeStatus($id, @@Name@@ChangeStatusRequest $request)
+    {
+        return $this->@@name@@->changeStatus($id, $request);
+    }
+}

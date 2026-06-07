@@ -1,0 +1,8 @@
+export default [
+  {
+    path: '@@module@@/@@NameKebabPlural@@',
+    name: '@@PluralName@@',
+    component: () => import('../../views/Page/@@Module@@/@@PluralName@@.vue'),
+    meta: { title: '@@PluralName@@', module: '@@Module@@' }
+  }
+]

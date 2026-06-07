@@ -1,54 +1,52 @@
 <?php
 
-namespace Modules\Core\Repositories\Branch;
+namespace Modules\Core\Repositories\Warehouse;
 
 use App\Repositories\Base\BaseRepository;
 use App\Traits\ImageTrait;
 use Illuminate\Support\Facades\File;
-use Modules\Core\Models\Branch\Branch;
-use Modules\Core\Repositories\Branch\BranchInterface;
-use Modules\Core\Resources\Branch\BranchResource;
+use Modules\Core\Models\Warehouse\Warehouse;
+use Modules\Core\Repositories\Warehouse\WarehouseInterface;
+use Modules\Core\Resources\Warehouse\WarehouseResource;
 
-class BranchRepository extends BaseRepository implements BranchInterface
+class WarehouseRepository extends BaseRepository implements WarehouseInterface
 {
     use ImageTrait;
 
     protected function getModel(): \Illuminate\Database\Eloquent\Model
     {
-        return new Branch();
+        return new Warehouse();
     }
 
     protected function getResourceClass(): string
     {
-        return BranchResource::class;
+        return WarehouseResource::class;
     }
 
     protected function getPluralName(): string
     {
-        return 'Branches';
+        return 'Warehouses';
     }
 
     protected function getSingularName(): string
     {
-        return 'Branch';
+        return 'Warehouse';
     }
-
-    
 
     public function store($request)
     {
         try {
-            $branch = $this->getModel()->create($request->validated());
+            $warehouse = $this->getModel()->create($request->validated());
 
             if ($request->hasFile('image')) {
-                $branch->clearMediaCollection('branch');
+                $warehouse->clearMediaCollection('warehouse');
                 $image = $request->file('image');
-                $this->uploadMedia($branch, 'branch', $image);
+                $this->uploadMedia($warehouse, 'warehouse', $image);
             }
             if ($request->hasFile('images')) {
-                $branch->clearMediaCollection('branch_images');
+                $warehouse->clearMediaCollection('warehouse_images');
                 foreach($request->file('images') as $image) {
-                    $this->uploadMedia($branch, 'branch_images', $image);
+                    $this->uploadMedia($warehouse, 'warehouse_images', $image);
                 }
             }
 
@@ -63,23 +61,21 @@ class BranchRepository extends BaseRepository implements BranchInterface
         }
     }
 
-
-
     public function update($id, $request)
     {
         try {
-            $branch = $this->getModel()->findOrFail($id);
-            $branch->update($request->validated());
+            $warehouse = $this->getModel()->findOrFail($id);
+            $warehouse->update($request->validated());
 
             if ($request->hasFile('image')) {
-                $branch->clearMediaCollection('branch');
+                $warehouse->clearMediaCollection('warehouse');
                 $image = $request->file('image');
-                $this->uploadMedia($branch, 'branch', $image);
+                $this->uploadMedia($warehouse, 'warehouse', $image);
             }
             if ($request->hasFile('images')) {
-                $branch->clearMediaCollection('branch_images');
+                $warehouse->clearMediaCollection('warehouse_images');
                 foreach($request->file('images') as $image) {
-                    $this->uploadMedia($branch, 'branch_images', $image);
+                    $this->uploadMedia($warehouse, 'warehouse_images', $image);
                 }
             }
 
@@ -94,17 +90,15 @@ class BranchRepository extends BaseRepository implements BranchInterface
         }
     }
 
-
-
     public function destroy($id)
     {
         try {
-            $branch = $this->getModel()->findOrFail($id);
+            $warehouse = $this->getModel()->findOrFail($id);
 
-            $singleMedia = $branch->getMedia('branch')->first();
-            $multiMedia  = $branch->getMedia('branch_images')->all();
+            $singleMedia = $warehouse->getMedia('warehouse')->first();
+            $multiMedia  = $warehouse->getMedia('warehouse_images')->all();
             if($singleMedia) {
-                $branch->clearMediaCollection('branch');
+                $warehouse->clearMediaCollection('warehouse');
                 $file_name = $singleMedia->file_name;
                 $img_id    = $singleMedia->id;
                 if($img_id && $file_name) {
@@ -114,7 +108,7 @@ class BranchRepository extends BaseRepository implements BranchInterface
                 }
             }
             if($multiMedia) {
-                $branch->clearMediaCollection('branch_images');
+                $warehouse->clearMediaCollection('warehouse_images');
                 foreach($multiMedia as $media) {
                     $file_name = $media->file_name;
                     $img_id    = $media->id;
@@ -126,13 +120,12 @@ class BranchRepository extends BaseRepository implements BranchInterface
                 }
             }
 
-            $branch->delete();
+            $warehouse->delete();
 
             return (new \App\Traits\API)
                 ->isOk(__('Destroyed Successfully'))
                 ->build();
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             return (new \App\Traits\API)
                 ->isError('An Error occured')
                 ->setStatus(500)

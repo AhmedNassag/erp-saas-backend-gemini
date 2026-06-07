@@ -1,0 +1,64 @@
+<?php
+
+namespace Tests\Feature\@@Module@@\@@Name@@;
+
+use Modules\@@Module@@\Models\@@Name@@\@@Name@@;
+use Tests\TestCase;
+
+class @@Name@@ControllerTest extends TestCase
+{
+    public function it_can_list_@@NameKebabPlural@@()
+    {
+        @@Name@@::factory()->count(3)->create();
+
+        $response = $this->getJson(route('@@NameKebab@@.index'));
+
+        $response->assertOk();
+    }
+
+    public function it_can_create_a_@@NameKebab@@()
+    {
+        $data = [
+@@TestData@@
+        ];
+
+        $response = $this->postJson(route('@@NameKebab@@.store'), $data);
+
+        $response->assertOk();
+        $this->assertDatabaseHas((new @@Name@@())->getTable(), array_filter($data, fn($v) => $v !== null));
+    }
+
+    public function it_can_show_a_@@NameKebab@@()
+    {
+        $@@name@@ = @@Name@@::factory()->create();
+
+        $response = $this->getJson(route('@@NameKebab@@.show', $@@name@@->id));
+
+        $response->assertOk();
+    }
+
+    public function it_can_update_a_@@NameKebab@@()
+    {
+        $@@name@@ = @@Name@@::factory()->create();
+
+        $data = [
+@@UpdateTestData@@
+        ];
+
+        $response = $this->putJson(route('@@NameKebab@@.update', $@@name@@->id), $data);
+
+        $response->assertOk();
+    }
+
+    public function it_can_delete_a_@@NameKebab@@()
+    {
+        $@@name@@ = @@Name@@::factory()->create();
+
+        $response = $this->deleteJson(route('@@NameKebab@@.destroy', $@@name@@->id));
+
+        $response->assertOk();
+        $this->assertSoftDeleted((new @@Name@@())->getTable(), [
+            'id' => $@@name@@->id,
+        ]);
+    }
+}

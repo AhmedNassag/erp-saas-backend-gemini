@@ -1,0 +1,50 @@
+<?php
+
+namespace Modules\@@Module@@\Models\@@Name@@;
+
+@@UseStatements@@
+use App\Models\TenantBaseModel;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\@@Module@@\Filters\@@Name@@\@@Name@@Filter;
+
+class @@Name@@ extends TenantBaseModel
+{
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        @@NameFillable@@
+    ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function($model) {
+            //
+        });
+    }
+
+    public function scopeStatus($query)
+    {
+        $query->where('status', 1);
+    }
+
+    public function scopeFilter($query, @@Name@@Filter $filter)
+    {
+        return $filter->apply($query);
+    }
+
+    public function ordering($ordering = [])
+    {
+        if (empty($ordering) || empty($ordering['order_by'])) {
+            return $this->orderBy('created_at', 'desc');
+        }
+        $order_by = $ordering['order_by'] ?? null;
+        $order_type = (!empty($ordering['order_type']) && in_array(strtolower($ordering['order_type']), ['desc', 'asc'])) ? $ordering['order_type'] : 'asc';
+        return $this->orderBy($order_by, $order_type);
+    }
+
+
+@@Relationships@@
+}

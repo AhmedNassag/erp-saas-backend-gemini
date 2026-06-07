@@ -8,6 +8,7 @@ use Modules\Core\Database\Seeders\Country\CountryDatabaseSeeder;
 use Modules\Core\Database\Seeders\City\CityDatabaseSeeder;
 use Modules\Core\Database\Seeders\Area\AreaDatabaseSeeder;
 use Modules\Core\Database\Seeders\Branch\BranchDatabaseSeeder;
+use Modules\Core\Database\Seeders\Warehouse\WarehouseDatabaseSeeder;
 use Modules\Core\Database\Seeders\Department\DepartmentDatabaseSeeder;
 use Modules\Core\Database\Seeders\User\UserDatabaseSeeder;
 use Modules\Core\Models\RoleAndPermission\Role;
@@ -26,6 +27,7 @@ class CoreDatabaseSeeder extends Seeder
             CityDatabaseSeeder::class,
             AreaDatabaseSeeder::class,
             BranchDatabaseSeeder::class,
+            WarehouseDatabaseSeeder::class,
             DepartmentDatabaseSeeder::class,
             UserDatabaseSeeder::class,
         ]);

@@ -1,0 +1,16 @@
+<?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Modules\@@Module@@\Http\Controllers\@@Name@@\@@Name@@Controller;
+
+Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
+    Route::prefix('@@module@@/@@NameKebab@@')->name('@@NameKebab@@.')->group(function () {
+        Route::get('/', [@@Name@@Controller::class, 'index'])->name('index');
+        Route::post('/', [@@Name@@Controller::class, 'store'])->name('store');
+        Route::get('/{id}', [@@Name@@Controller::class, 'show'])->name('show');
+        Route::put('/{id}', [@@Name@@Controller::class, 'update'])->name('update');
+        Route::delete('/{id}', [@@Name@@Controller::class, 'destroy'])->name('destroy');
+        Route::post('/change-status/{id}', [@@Name@@Controller::class, 'changeStatus'])->name('change-status');
+    });
+});

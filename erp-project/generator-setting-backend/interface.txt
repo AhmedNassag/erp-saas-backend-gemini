@@ -1,0 +1,9 @@
+<?php
+
+namespace Modules\@@Module@@\Repositories\@@Name@@;
+
+use App\Repositories\Base\BaseInterface;
+
+interface @@Name@@Interface extends BaseInterface
+{
+}

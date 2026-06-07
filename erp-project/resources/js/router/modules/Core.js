@@ -24,6 +24,12 @@ export default [
     meta: { title: 'Branches', module: 'Core' }
   },
   {
+    path: 'core/warehouses',
+    name: 'Warehouses',
+    component: () => import('../../views/Page/Core/Warehouses.vue'),
+    meta: { title: 'Warehouses', module: 'Core' }
+  },
+  {
     path: 'core/departments',
     name: 'Departments',
     component: () => import('../../views/Page/Core/Departments.vue'),

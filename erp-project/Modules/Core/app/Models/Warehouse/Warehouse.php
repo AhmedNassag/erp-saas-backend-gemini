@@ -1,99 +1,74 @@
 <?php
 
-namespace Modules\Core\Models\Branch;
+namespace Modules\Core\Models\Warehouse;
 
 use App\Models\TenantBaseModel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\Translatable\HasTranslations;
 use Laravel\Scout\Searchable;
-use App\Traits\ActivityLogTrait;
-use Modules\Core\Filters\Branch\BranchFilter;
+use Modules\Core\Filters\Warehouse\WarehouseFilter;
 
-class Branch extends TenantBaseModel implements HasMedia
+class Warehouse extends TenantBaseModel implements HasMedia
 {
-    use HasFactory, SoftDeletes, InteractsWithMedia, Searchable/*, HasTranslations*/;
+    use HasFactory, SoftDeletes, InteractsWithMedia, Searchable;
     use Searchable {
         Searchable::search as parentSearch;
     }
 
-
-
-    //this function use to make validation before destroy the record to refuse deleting if it has a related data in other tables
     protected static function boot()
     {
         parent::boot();
-        // static::deleting(function ($model) {
-        //     if (
-        //         $model->branches()->count() > 0
-        //     ) {
-        //         throw new \Exception(__('Can Not Delete Beacause There Is A Related Data'));
-        //     }
-        // });
     }
-
-
 
     protected $fillable = [
         'name',
         'status',
-        'code',
-        'commercialRegistration',
-        'taxCard',
         'mobile',
-        'address',
+        'branch_id',
         'area_id',
+        'address',
+        'is_main',
     ];
-
-
 
     protected $appends = [
         'image',
-        'images'
+        'images',
     ];
 
-
+    protected $casts = [
+        'is_main' => 'boolean',
+    ];
 
     public function scopeStatus($query)
     {
         $query->where('status', 1);
     }
 
-
-
     public function toSearchableArray(): array
     {
         return [
-            'name'           => $this->name,
-            'code'           => $this->code,
-            'commercialRegistration' => $this->commercialRegistration,
-            'taxCard'        => $this->taxCard,
-            'mobile'         => $this->mobile,
-            'area_name'      => $this->area ? $this->area->name : null
+            'name'        => $this->name,
+            'mobile'      => $this->mobile,
+            'area_name'   => $this->area ? $this->area->name : null,
+            'branch_name' => $this->branch ? $this->branch->name : null,
         ];
     }
 
-
-
-    public function scopeFilter($query, BranchFilter $filter)
+    public function scopeFilter($query, WarehouseFilter $filter)
     {
         return $filter->apply($query);
     }
 
-
-
     public static function search($query = '', $callback = null)
     {
         return static::parentSearch($query, $callback)->query(function ($builder) use ($query) {
-            $builder->join('areas', 'branches.area_id', '=', 'areas.id')
-                ->select(['areas.name', 'branches.*'])
-                ->orderBy('branches.id', 'DESC');
+            $builder->join('areas', 'warehouses.area_id', '=', 'areas.id')
+                ->select(['areas.name', 'warehouses.*'])
+                ->orderBy('warehouses.id', 'DESC');
         });
     }
-
-
 
     public function ordering($ordering = [])
     {
@@ -105,47 +80,37 @@ class Branch extends TenantBaseModel implements HasMedia
         if ($order_by == 'name') {
             return $this->orderBy($order_by, $order_type);
         }
-        if ($order_by == 'code') {
+        if ($order_by == 'mobile') {
             return $this->orderBy($order_by, $order_type);
         }
-        if ($order_by == 'commercialRegistration') {
+        if ($order_by == 'is_main') {
             return $this->orderBy($order_by, $order_type);
         }
-        if ($order_by == 'taxCard') {
-            return $this->orderBy($order_by, $order_type);
-        }
-        if (in_array($order_by, ['area_id'])) {
+        if (in_array($order_by, ['area_id', 'branch_id'])) {
             $model = str_replace("y_id", "", $order_by);
-            $models = $order_by == "area_id" ? $model . 'ies' : $model . 's';
-            return $this->select("branches.*")->join($models, $models . ".id", "=", "branches." . $order_by)->orderBy($models . '.name', $order_type);
+            $models = in_array($order_by, ['area_id', 'branch_id']) ? ($order_by == 'area_id' ? 'areas' : 'branches') : $model . 's';
+            return $this->select("warehouses.*")->join($models, $models . ".id", "=", "warehouses." . $order_by)->orderBy($models . '.name', $order_type);
         }
 
         return $this->orderBy('created_at', 'desc');
     }
 
-
-
-    ///////////////////////// start image /////////////////////////
     public function getImageAttribute()
     {
-        $file = $this->getMedia('branch')->last();
+        $file = $this->getMedia('warehouse')->last();
         if ($file) {
-            $file->id       = $this->getMedia('branch')->last()->id;
+            $file->id       = $this->getMedia('warehouse')->last()->id;
             $file->url      = $file->getUrl();
             $file->localUrl = app('url')->asset('storage/' . $file->id . '/' . $file->file_name);
         }
         return $file;
     }
 
-
-
     public function getImagesAttribute()
     {
-        $files = $this->getMedia('branch_images');
+        $files = $this->getMedia('warehouse_images');
         return $this->filesData($files);
     }
-
-
 
     public function filesData($data)
     {
@@ -157,7 +122,6 @@ class Branch extends TenantBaseModel implements HasMedia
         }
         return ($urls);
     }
-    ///////////////////////// end image /////////////////////////
 
 
 
@@ -165,5 +129,10 @@ class Branch extends TenantBaseModel implements HasMedia
     public function area()
     {
         return $this->belongsTo(\Modules\Core\Models\Area\Area::class, 'area_id', 'id');
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(\Modules\Core\Models\Branch\Branch::class, 'branch_id', 'id');
     }
 }

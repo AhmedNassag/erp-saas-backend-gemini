@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password'); // الباسورد
             // $table->unsignedBigInteger('department_id')->nullable(); // ربط المستخدم بفرع معين
             // $table->foreign('department_id')->references('id')->on('departments')->onDelete('set null'); 
-            $table->string('role')->nullable();; // دور الموظف
+            $table->string('role')->nullable(); // دور الموظف
             $table->boolean('status')->default(1); // حالة المستخدم (نشط/غير نشط)
             $table->rememberToken();
             $table->timestamps();

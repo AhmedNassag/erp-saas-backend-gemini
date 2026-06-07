@@ -1,0 +1,31 @@
+<?php
+
+namespace Modules\@@Module@@\Repositories\@@Name@@;
+
+use App\Repositories\Base\BaseRepository;
+use Modules\@@Module@@\Models\@@Name@@\@@Name@@;
+use Modules\@@Module@@\Repositories\@@Name@@\@@Name@@Interface;
+use Modules\@@Module@@\Resources\@@Name@@\@@Name@@Resource;
+
+class @@Name@@Repository extends BaseRepository implements @@Name@@Interface
+{
+    protected function getModel(): \Illuminate\Database\Eloquent\Model
+    {
+        return new @@Name@@();
+    }
+
+    protected function getResourceClass(): string
+    {
+        return @@Name@@Resource::class;
+    }
+
+    protected function getPluralName(): string
+    {
+        return '@@PluralName@@';
+    }
+
+    protected function getSingularName(): string
+    {
+        return '@@Name@@';
+    }
+}

@@ -8,21 +8,14 @@ class BranchFilter extends Filters
 {
     protected array $var_filters = [
         'search',
+        'status',
+        'code',
+        'commercialRegistration',
+        'taxCard',
+        'mobile',
         'area_id',
         'address',
-        'modile',
-        'code',
-        'status'
     ];
-
-
-
-    public function area_id($area_id)
-    {
-        if($area_id != 'null' && $area_id != null) {
-            return $this->builder->where('area_id',$area_id);
-        }
-    }
 
 
 
@@ -35,10 +28,37 @@ class BranchFilter extends Filters
 
 
 
+    public function area_id($area_id)
+    {
+        if($area_id != 'null' && $area_id != null) {
+            return $this->builder->where('area_id',$area_id);
+        }
+    }
+
+
+
     public function mobile($mobile)
     {
         if($mobile != 'null' && $mobile != null) {
             return $this->builder->where('mobile',$mobile);
+        }
+    }
+
+
+
+    public function taxCard($taxCard)
+    {
+        if($taxCard != 'null' && $taxCard != null) {
+            return $this->builder->where('taxCard',$taxCard);
+        }
+    }
+
+
+
+    public function commercialRegistration($commercialRegistration)
+    {
+        if($commercialRegistration != 'null' && $commercialRegistration != null) {
+            return $this->builder->where('commercialRegistration',$commercialRegistration);
         }
     }
 
