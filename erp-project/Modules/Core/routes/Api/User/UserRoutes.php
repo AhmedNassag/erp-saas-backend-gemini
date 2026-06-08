@@ -18,7 +18,6 @@ use Modules\Core\Http\Controllers\User\UserController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
     Route::prefix('core/user')->name('user.')->group(function () {
-        // Route::resource('/', UserController::class);
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::post('/', [UserController::class, 'store'])->name('store');
         Route::get('/{id}', [UserController::class, 'show'])->name('show');

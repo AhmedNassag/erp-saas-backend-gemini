@@ -18,7 +18,6 @@ use Modules\Core\Http\Controllers\Country\CountryController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
     Route::prefix('core/country')->name('country.')->group(function () {
-        // Route::resource('/', CountryController::class);
         Route::get('/', [CountryController::class, 'index'])->name('index');
         Route::post('/', [CountryController::class, 'store'])->name('store');
         Route::get('/{id}', [CountryController::class, 'show'])->name('show');

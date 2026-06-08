@@ -5,7 +5,7 @@ namespace Modules\Core\Database\Seeders\City;
 use Illuminate\Database\Seeder;
 use App\Traits\PermissionSeederTrait;
 use Modules\Core\Models\RoleAndPermission\Permission;
-use Modules\Core\Database\Seeders\City\EgyptSeeder;
+use Modules\Core\Database\Seeders\City\CitySeeder;
 
 class CityDatabaseSeeder extends Seeder
 {
@@ -22,9 +22,9 @@ class CityDatabaseSeeder extends Seeder
 
         $this->createOrUpdatePermissions($models, $actions);
 
-        // ⭐ Run Egypt Seeder After Permissions
+        // ⭐ Run City Seeder After Permissions
         $this->call([
-            EgyptSeeder::class,
+            CitySeeder::class,
         ]);
     }
 }

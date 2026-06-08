@@ -17,7 +17,6 @@ use Modules\Core\Http\Controllers\Branch\BranchController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
     Route::prefix('core/branch')->name('branch.')->group(function () {
-        // Route::resource('/', BranchController::class);
         Route::get('/', [BranchController::class, 'index'])->name('index');
         Route::post('/', [BranchController::class, 'store'])->name('store');
         Route::get('/{id}', [BranchController::class, 'show'])->name('show');

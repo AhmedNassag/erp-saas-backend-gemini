@@ -38,7 +38,10 @@
             "Modules\\Landlord\\Database\\Seeders\\": "Modules/Landlord/database/seeders/",
             
             "Modules\\Core\\": "Modules/Core/app/",
-            "Modules\\Core\\Database\\Seeders\\": "Modules/Core/database/seeders/"
+            "Modules\\Core\\Database\\Seeders\\": "Modules/Core/database/seeders/",
+
+            "Modules\\Inventory\\": "Modules/Inventory/app/",
+            "Modules\\Inventory\\Database\\Seeders\\": "Modules/Inventory/database/seeders/"
         }
     },
     "autoload-dev": {

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import BodyView from '../layout/BodyView.vue'
 import { Auth } from '../API/Auth'
 import CoreRoutes from './modules/Core'
+import InventoryRoutes from './modules/Inventory'
 
 const routes = [
   {
@@ -20,6 +21,7 @@ const routes = [
         meta: { title: 'Dashboard' }
       },
       ...CoreRoutes,
+      ...InventoryRoutes,
     ]
   },
   {

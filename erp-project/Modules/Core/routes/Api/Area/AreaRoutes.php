@@ -17,7 +17,6 @@ use Modules\Core\Http\Controllers\Area\AreaController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
     Route::prefix('core/area')->name('area.')->group(function () {
-        // Route::resource('/', AreaController::class);
         Route::get('/', [AreaController::class, 'index'])->name('index');
         Route::post('/', [AreaController::class, 'store'])->name('store');
         Route::get('/{id}', [AreaController::class, 'show'])->name('show');

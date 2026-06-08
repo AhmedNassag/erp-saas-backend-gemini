@@ -14,15 +14,15 @@ return new class extends Migration
         Schema::create('branches', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->integer('status')->default(1);
-            $table->string('code');
+            $table->boolean('status')->default(1);
+            $table->string('code')->unique();
             $table->string('commercialRegistration');
             $table->string('taxCard');
-            $table->string('mobile');
+            $table->string('mobile', 192);
             $table->string('address')->nullable();
             $table->unsignedBigInteger('area_id');
             $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
-            $table->index(['name','mobile']);
+            $table->index('code');
             $table->timestamps();
             $table->softDeletes();
         });

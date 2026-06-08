@@ -13,6 +13,7 @@ use App\Traits\ActivityLogTrait;
 use Modules\Core\Filters\Area\AreaFilter;
 use Modules\Core\Models\Branch\Branch;
 use Modules\Core\Models\City\City;
+use Modules\Core\Models\Warehouse\Warehouse;
 
 class Area extends TenantBaseModel implements HasMedia
 {
@@ -106,13 +107,19 @@ class Area extends TenantBaseModel implements HasMedia
 
 
     //start relations
-    public function branches()
-    {
-        return $this->hasMany(Branch::class);
-    }
-
     public function city()
     {
         return $this->belongsTo(City::class, 'city_id', 'id');
     }
+
+    public function branches()
+    {
+        return $this->hasMany(Branch::class, 'area_id', 'id');
+    }
+
+    public function warehouses()
+    {
+        return $this->hasMany(Warehouse::class, 'area_id', 'id');
+    }
+
 }

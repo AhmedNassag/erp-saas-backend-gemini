@@ -4,6 +4,7 @@ namespace Modules\Core\Database\Seeders\Country;
 
 use Modules\Core\Models\RoleAndPermission\Permission;
 use Illuminate\Database\Seeder;
+use Modules\Core\Database\Seeders\Country\CountrySeeder;
 
 class CountryDatabaseSeeder extends Seeder
 {
@@ -17,5 +18,10 @@ class CountryDatabaseSeeder extends Seeder
         $models  = ['country' => 'Core'];
 
         $this->createOrUpdatePermissions($models, $actions);
+
+        // ⭐ Run Country Seeder After Permissions
+        $this->call([
+            CountrySeeder::class,
+        ]);
     }
 }

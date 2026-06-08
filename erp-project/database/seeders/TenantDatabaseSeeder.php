@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Core\Database\Seeders\CoreDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\InventoryDatabaseSeeder;
 
 class TenantDatabaseSeeder extends Seeder
 {
@@ -13,9 +14,9 @@ class TenantDatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Core data: roles, permissions, countries, cities, areas, branches
         $this->call([
             CoreDatabaseSeeder::class,
+            InventoryDatabaseSeeder::class,
         ]);
     }
 }

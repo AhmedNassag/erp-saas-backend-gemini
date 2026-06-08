@@ -9,6 +9,8 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Laravel\Scout\Searchable;
 use Modules\Core\Filters\Warehouse\WarehouseFilter;
+use Modules\Core\Models\Area\Area;
+use Modules\Core\Models\Branch\Branch;
 
 class Warehouse extends TenantBaseModel implements HasMedia
 {
@@ -128,11 +130,11 @@ class Warehouse extends TenantBaseModel implements HasMedia
     //start relations
     public function area()
     {
-        return $this->belongsTo(\Modules\Core\Models\Area\Area::class, 'area_id', 'id');
+        return $this->belongsTo(Area::class, 'area_id', 'id');
     }
 
     public function branch()
     {
-        return $this->belongsTo(\Modules\Core\Models\Branch\Branch::class, 'branch_id', 'id');
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
     }
 }

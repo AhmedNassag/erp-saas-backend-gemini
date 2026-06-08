@@ -18,7 +18,6 @@ use Modules\Core\Http\Controllers\Department\DepartmentController;
 
 Route::middleware(['auth:sanctum'])->prefix('v1')->name('api.')->group(function () {
     Route::prefix('core/department')->name('department.')->group(function () {
-        // Route::resource('/', DepartmentController::class);
         Route::get('/', [DepartmentController::class, 'index'])->name('index');
         Route::post('/', [DepartmentController::class, 'store'])->name('store');
         Route::get('/{id}', [DepartmentController::class, 'show'])->name('show');

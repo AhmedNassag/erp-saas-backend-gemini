@@ -11,15 +11,16 @@ return new class extends Migration
         Schema::create('warehouses', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name');
-            $table->integer('status')->default(1);
-            $table->string('mobile');
+            $table->boolean('status')->default(1);
+            $table->string('code')->unique();
+            $table->string('mobile', 192);
             $table->unsignedBigInteger('branch_id');
             $table->foreign('branch_id')->references('id')->on('branches')->onDelete('cascade');
             $table->unsignedBigInteger('area_id');
             $table->foreign('area_id')->references('id')->on('areas')->onDelete('cascade');
             $table->string('address')->nullable();
             $table->boolean('is_main')->default(false);
-            $table->index(['name', 'mobile']);
+            $table->index('code');
             $table->timestamps();
             $table->softDeletes();
         });

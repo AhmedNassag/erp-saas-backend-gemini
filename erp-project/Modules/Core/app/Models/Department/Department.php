@@ -11,7 +11,7 @@ use Spatie\Translatable\HasTranslations;
 use Laravel\Scout\Searchable;
 use App\Traits\ActivityLogTrait;
 use Modules\Core\Filters\Department\DepartmentFilter;
-use Modules\Core\Models\City\City;
+use Modules\Core\Models\User\User;
 
 
 class Department extends TenantBaseModel implements HasMedia
@@ -85,6 +85,6 @@ class Department extends TenantBaseModel implements HasMedia
     //start relations
     public function users()
     {
-        // return $this->hasMany(\Modules\Core\Models\User\User::class, 'department_id'); 
+        return $this->hasMany(User::class, 'department_id', 'id'); 
     }
 }

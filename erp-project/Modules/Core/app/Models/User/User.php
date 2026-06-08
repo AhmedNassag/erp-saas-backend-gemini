@@ -12,6 +12,7 @@ use Laravel\Scout\Searchable;
 use App\Traits\ActivityLogTrait;
 use Modules\Core\Filters\User\UserFilter;
 use Modules\Core\Models\RoleAndPermission\Role;
+use Modules\Core\Models\Department\Department;
 // use Modules\Core\Models\Employee\Employee;
 
 
@@ -88,6 +89,11 @@ class User extends TenantBaseModel implements HasMedia
 
 
     //start relations
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id', 'id');
+    }
+
     public function employee()
     {
         // return $this->hasOne(Employee::class);

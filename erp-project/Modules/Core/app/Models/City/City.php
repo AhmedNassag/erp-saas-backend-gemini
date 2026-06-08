@@ -103,13 +103,13 @@ class City extends TenantBaseModel implements HasMedia
 
 
     //start relations
-    public function areas()
-    {
-        return $this->hasMany(Area::class);
-    }
-
     public function country()
     {
         return $this->belongsTo(Country::class, 'country_id', 'id');
+    }
+
+    public function areas()
+    {
+        return $this->hasMany(Area::class, 'city_id', 'id');
     }
 }

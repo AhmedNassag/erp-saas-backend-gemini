@@ -11,6 +11,8 @@ use Spatie\Translatable\HasTranslations;
 use Laravel\Scout\Searchable;
 use App\Traits\ActivityLogTrait;
 use Modules\Core\Filters\Branch\BranchFilter;
+use Modules\Core\Models\Area\Area;
+use Modules\Core\Models\Warehouse\Warehouse;
 
 class Branch extends TenantBaseModel implements HasMedia
 {
@@ -164,6 +166,11 @@ class Branch extends TenantBaseModel implements HasMedia
     //start relations
     public function area()
     {
-        return $this->belongsTo(\Modules\Core\Models\Area\Area::class, 'area_id', 'id');
+        return $this->belongsTo(Area::class, 'area_id', 'id');
+    }
+
+    public function warehouses()
+    {
+        return $this->hasMany(Warehouse::class, 'branch_id', 'id');
     }
 }

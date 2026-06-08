@@ -2,8 +2,8 @@
 
 namespace Modules\Core\Database\Seeders\Warehouse;
 
-use Modules\Core\Models\RoleAndPermission\Permission;
 use Illuminate\Database\Seeder;
+use Modules\Core\Database\Seeders\Warehouse\WarehouseSeeder;
 
 class WarehouseDatabaseSeeder extends Seeder
 {
@@ -15,5 +15,9 @@ class WarehouseDatabaseSeeder extends Seeder
         $models  = ['warehouse' => 'Core'];
 
         $this->createOrUpdatePermissions($models, $actions);
+
+        $this->call([
+            WarehouseSeeder::class,
+        ]);
     }
 }

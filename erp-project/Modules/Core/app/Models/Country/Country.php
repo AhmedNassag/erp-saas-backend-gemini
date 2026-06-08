@@ -85,6 +85,6 @@ class Country extends TenantBaseModel implements HasMedia
     //start relations
     public function cities()
     {
-        return $this->hasMany(City::class);
+        return $this->hasMany(City::class, 'country_id', 'id');
     }
 }
