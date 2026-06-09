@@ -113,7 +113,12 @@ export default {
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)
         notify({ text: this.editingId ? 'City updated' : 'City created', type: 'success' })
         this.modal.hide(); this.loadItems()
-      } catch (e) { notify({ text: e.response?.data?.message || 'Error saving city', type: 'error' }) } finally { this.saving = false }
+      } catch (e) {
+        const errors = e.response?.data?.errors
+        if (errors) { Object.entries(errors).forEach(([field, msgs]) => msgs.forEach(msg => notify({ text: field + ': ' + msg, type: 'error' }))) }
+        else { notify({ text: e.response?.data?.message || 'Error saving city', type: 'error' }) }
+        this.saving = false
+      }
     },
     async deleteItem(id) {
       if ((await Swal.fire({ title: 'Delete City?', text: 'This action cannot be undone.', icon: 'warning', showCancelButton: true, confirmButtonText: 'Delete' })).isConfirmed) {

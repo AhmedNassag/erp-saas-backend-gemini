@@ -7,6 +7,10 @@ use Modules\Inventory\Database\Seeders\Client\ClientDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Provider\ProviderDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Category\CategoryDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Brand\BrandDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\Currency\CurrencyDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\Unit\UnitDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\Setting\SettingDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\Product\ProductDatabaseSeeder;
 use Modules\Core\Models\RoleAndPermission\Role;
 use Modules\Core\Models\RoleAndPermission\Permission;
 
@@ -19,6 +23,10 @@ class InventoryDatabaseSeeder extends Seeder
             ProviderDatabaseSeeder::class,
             CategoryDatabaseSeeder::class,
             BrandDatabaseSeeder::class,
+            CurrencyDatabaseSeeder::class,
+            UnitDatabaseSeeder::class,
+            SettingDatabaseSeeder::class,
+            ProductDatabaseSeeder::class,
         ]);
 
         $adminRole = Role::where('name', 'Admin')->where('guard_name', 'tenant')->first();

@@ -189,7 +189,9 @@ export default {
         this.modal.hide()
         this.loadItems()
       } catch (e) {
-        notify({ text: e.response?.data?.message || 'Error saving user', type: 'error' })
+        const errors = e.response?.data?.errors
+        if (errors) { Object.entries(errors).forEach(([field, msgs]) => msgs.forEach(msg => notify({ text: field + ': ' + msg, type: 'error' }))) }
+        else { notify({ text: e.response?.data?.message || 'Error saving user', type: 'error' }) }
       }
       finally {
         this.saving = false

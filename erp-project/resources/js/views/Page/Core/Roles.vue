@@ -241,9 +241,9 @@ export default {
         this.closeWizard()
         this.loadItems()
       } catch (e) {
-        const msg = e.response?.data?.message || 'Error saving role'
-        if (e.response?.data?.errors) this.form.errors = e.response.data.errors
-        notify({ text: msg, type: 'error' })
+        const errors = e.response?.data?.errors
+        if (errors) { Object.entries(errors).forEach(([field, msgs]) => msgs.forEach(msg => notify({ text: field + ': ' + msg, type: 'error' }))) }
+        else { notify({ text: e.response?.data?.message || 'Error saving role', type: 'error' }) }
       } finally { this.saving = false }
     },
     async deleteItem(id) {
