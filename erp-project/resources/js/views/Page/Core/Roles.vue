@@ -239,6 +239,7 @@ export default {
         else await this.api.insert(fd)
         notify({ text: this.editingId ? 'Role updated' : 'Role created', type: 'success' })
         this.closeWizard()
+        this.saving = false;
         this.loadItems()
       } catch (e) {
         const errors = e.response?.data?.errors

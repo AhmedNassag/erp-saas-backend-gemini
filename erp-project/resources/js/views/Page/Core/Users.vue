@@ -186,7 +186,8 @@ export default {
         if (this.editingId) await this.api.update(this.editingId, fd)
         else await this.api.insert(fd)
         notify({ text: this.editingId ? 'User updated' : 'User created', type: 'success' })
-        this.modal.hide()
+        this.modal.hide();
+        this.saving = false;
         this.loadItems()
       } catch (e) {
         const errors = e.response?.data?.errors

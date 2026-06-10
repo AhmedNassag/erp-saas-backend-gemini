@@ -15,7 +15,7 @@ export default {
     },
     {
       title: 'Areas',
-      icon: 'ki-outline ki-location',
+      icon: 'ki-outline ki-map-pin',
       route: '/core/areas',
       permission: 'read-area',
     },
@@ -27,13 +27,13 @@ export default {
     },
     {
       title: 'Warehouses',
-      icon: 'ki-outline ki-box',
+      icon: 'ki-outline ki-building',
       route: '/core/warehouses',
       permission: 'read-warehouse',
     },
     {
       title: 'Departments',
-      icon: 'ki-outline ki-building',
+      icon: 'ki-outline ki-sitemap',
       route: '/core/departments',
       permission: 'read-department',
     },
@@ -51,7 +51,7 @@ export default {
     },
     {
       title: 'Users',
-      icon: 'ki-outline ki-lock',
+      icon: 'ki-outline ki-profile-user',
       route: '/core/users',
       permission: 'read-user',
     },

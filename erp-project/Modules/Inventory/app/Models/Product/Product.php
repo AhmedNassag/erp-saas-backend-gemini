@@ -57,6 +57,11 @@ class Product extends TenantBaseModel implements HasMedia
         'stock_alert' => 'float',
     ];
 
+    public function setIsVariantAttribute($value)
+    {
+        $this->attributes['is_variant'] = filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
+    }
+
     public function scopeStatus($query)
     {
         $query->where('status', 1);

@@ -100,7 +100,9 @@ export default {
         const fd = new FormData(); fd.append('name',  this.form.name);
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)
         notify({ text: this.editingId ? 'Country updated' : 'Country created', type: 'success' })
-        this.modal.hide(); this.loadItems()
+        this.modal.hide();
+        this.saving = false;
+        this.loadItems()
       } catch (e) {
         const errors = e.response?.data?.errors
         if (errors) { Object.entries(errors).forEach(([field, msgs]) => msgs.forEach(msg => notify({ text: field + ': ' + msg, type: 'error' }))) }

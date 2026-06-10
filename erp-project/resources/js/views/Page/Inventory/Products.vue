@@ -198,13 +198,25 @@
                     </div>
                   </div>
                 </div>
-                <div class="col-md-12">
+                <div class="col-md-6">
                   <div class="fv-row mb-7">
                     <label class="fs-6 fw-semibold mb-2">Image</label>
-                    <div v-if="editingId && form.imagePreview" class="mb-3">
+                    <div v-if="form.imagePreview" class="mb-3">
                       <img :src="form.imagePreview" class="rounded border" style="max-width:150px;max-height:150px;object-fit:cover" />
                     </div>
                     <input type="file" ref="imageInput" accept="image/png,image/jpg,image/jpeg" class="form-control form-control-solid" @change="onImageChange" />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="fv-row mb-7">
+                    <label class="fs-6 fw-semibold mb-2">Images</label>
+                    <div v-if="form.imagesPreview.length" class="mb-3 d-flex gap-2 flex-wrap">
+                      <div v-for="(img, idx) in form.imagesPreview" :key="idx" class="position-relative">
+                        <img :src="img.url || img" class="rounded border" style="max-width:100px;max-height:100px;object-fit:cover" />
+                        <span class="position-absolute top-0 end-0 badge bg-danger rounded-circle" style="cursor:pointer;padding:2px 6px;font-size:10px" @click="removeImage(idx)">&times;</span>
+                      </div>
+                    </div>
+                    <input type="file" ref="imagesInput" multiple accept="image/png,image/jpg,image/jpeg" class="form-control form-control-solid" @change="onImagesChange" />
                   </div>
                 </div>
               </div>
@@ -246,6 +258,7 @@ export default {
         category_id: '', brand_id: '', unit_id: '', unit_sale_id: '', unit_purchase_id: '',
         TaxNet: 0, tax_method: '1', note: '', stock_alert: 0, is_variant: false,
         imagePreview: null, imageFile: null,
+        imagesPreview: [], imagesFiles: [],
       },
       variants: [], variantInput: '',
     }
@@ -272,10 +285,15 @@ export default {
         this.units = (uns.data || uns).filter(u => u.base_unit === null)
       } catch { notify({ text: 'Failed to load select data', type: 'error' }) }
     },
+    resetFileInputs() {
+      if (this.$refs.imageInput) this.$refs.imageInput.value = ''
+      if (this.$refs.imagesInput) this.$refs.imagesInput.value = ''
+    },
     openForm() {
       this.editingId = null
-      this.form = { code: '', Type_barcode: 'CODE128', name: '', cost: '', price: '', category_id: '', brand_id: '', unit_id: '', unit_sale_id: '', unit_purchase_id: '', TaxNet: 0, tax_method: '1', note: '', stock_alert: 0, is_variant: false, imagePreview: null, imageFile: null }
+      this.form = { code: '', Type_barcode: 'CODE128', name: '', cost: '', price: '', category_id: '', brand_id: '', unit_id: '', unit_sale_id: '', unit_purchase_id: '', TaxNet: 0, tax_method: '1', note: '', stock_alert: 0, is_variant: false, imagePreview: null, imageFile: null, imagesPreview: [], imagesFiles: [] }
       this.variants = []; this.variantInput = ''; this.unitSubs = []
+      this.resetFileInputs()
       this.modal.show()
     },
     async editItem(item) {
@@ -297,6 +315,9 @@ export default {
       this.form.is_variant = !!item.is_variant
       this.form.imagePreview = item.image || null
       this.form.imageFile = null
+      this.form.imagesPreview = item.images || []
+      this.form.imagesFiles = []
+      this.resetFileInputs()
       this.variants = (item.variants || []).map(v => ({ id: v.id, text: v.name, qty: v.qty || 0, product_id: item.id }))
       this.variantInput = ''
       if (item.unit_id) await this.loadUnitSubs(item.unit_id)
@@ -317,6 +338,17 @@ export default {
         this.form.imagePreview = URL.createObjectURL(file)
       }
     },
+    onImagesChange(e) {
+      const files = Array.from(e.target.files)
+      files.forEach(file => {
+        this.form.imagesFiles.push(file)
+        this.form.imagesPreview.push({ url: URL.createObjectURL(file) })
+      })
+    },
+    removeImage(idx) {
+      this.form.imagesPreview.splice(idx, 1)
+      this.form.imagesFiles.splice(idx, 1)
+    },
     async onUnitChange() {
       this.form.unit_sale_id = ''
       this.form.unit_purchase_id = ''
@@ -330,6 +362,14 @@ export default {
       } catch { this.unitSubs = [] }
     },
     async saveItem() {
+      if (this.form.is_variant && this.variants.length === 0) {
+          notify({ 
+              text: 'Please add at least one variant when "Product Has Multi Variants" is enabled', 
+              type: 'error' 
+          });
+          this.saving = false;
+          return;
+      }
       this.saving = true
       try {
         const fd = new FormData()
@@ -356,14 +396,20 @@ export default {
               fd.append('variants[' + i + '][qty]', v.qty || 0)
               fd.append('variants[' + i + '][product_id]', v.product_id || this.editingId || '')
             } else {
-              fd.append('variants[' + i + ']', v.text || v)
+              fd.append('variants[' + i + '][text]', v.text || v)
             }
           })
         }
         if (this.form.imageFile) fd.append('image', this.form.imageFile)
+        if (this.form.imagesFiles.length) {
+          this.form.imagesFiles.forEach(f => fd.append('images[]', f))
+        }
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)
         notify({ text: this.editingId ? 'Product updated' : 'Product created', type: 'success' })
-        this.modal.hide(); this.loadItems()
+        this.resetFileInputs()
+        this.modal.hide();
+        this.saving = false;
+        this.loadItems()
       } catch (e) {
         const errors = e.response?.data?.errors
         if (errors) { Object.entries(errors).forEach(([field, msgs]) => msgs.forEach(msg => notify({ text: field + ': ' + msg, type: 'error' }))) }

@@ -158,7 +158,10 @@ export default {
         if (this.form.base_unit) { fd.append('base_unit', this.form.base_unit); fd.append('operator', this.form.operator); fd.append('operator_value', this.form.operator_value) }
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)
         notify({ text: this.editingId ? 'Unit updated' : 'Unit created', type: 'success' })
-        this.modal.hide(); this.loadItems(); this.loadBaseUnits()
+        this.modal.hide();
+        this.saving = false;
+        this.loadItems();
+        this.loadBaseUnits()
       } catch (e) {
         const errors = e.response?.data?.errors
         if (errors) { Object.entries(errors).forEach(([field, msgs]) => msgs.forEach(msg => notify({ text: field + ': ' + msg, type: 'error' }))) }

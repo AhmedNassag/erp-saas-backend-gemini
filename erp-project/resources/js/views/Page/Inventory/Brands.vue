@@ -71,7 +71,7 @@
               </div>
               <div class="fv-row mb-7">
                 <label class="fs-6 fw-semibold mb-2">Image</label>
-                <div v-if="editingId && form.imagePreview" class="mb-3">
+                <div v-if="form.imagePreview" class="mb-3">
                   <img :src="form.imagePreview" class="rounded border" style="max-width:150px;max-height:150px;object-fit:cover" />
                 </div>
                 <input type="file" ref="imageInput" accept="image/png,image/jpg,image/jpeg" class="form-control form-control-solid" @change="onImageChange" />
@@ -108,9 +108,13 @@ export default {
   mounted() { this.loadItems(); this.modal = new Modal(this.$refs.modalEl) },
   methods: {
     async loadItems() { try { const d = await this.api.getAll(); this.items = d.data || d } catch { notify({ text: 'Failed to load brands', type: 'error' }) } },
+    resetFileInputs() {
+      if (this.$refs.imageInput) this.$refs.imageInput.value = ''
+    },
     openForm() {
       this.editingId = null
       this.form = { name: '', code: '', imagePreview: null, imageFile: null }
+      this.resetFileInputs()
       this.modal.show()
     },
     async editItem(item) {
@@ -119,6 +123,7 @@ export default {
       this.form.code = item.code || ''
       this.form.imagePreview = item.image || null
       this.form.imageFile = null
+      this.resetFileInputs()
       this.modal.show()
     },
     onImageChange(e) {
@@ -137,7 +142,10 @@ export default {
         if (this.form.imageFile) { fd.append('image', this.form.imageFile) }
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)
         notify({ text: this.editingId ? 'Brand updated' : 'Brand created', type: 'success' })
-        this.modal.hide(); this.loadItems()
+        this.resetFileInputs()
+        this.modal.hide();
+        this.saving = false;
+        this.loadItems()
       } catch (e) {
         const errors = e.response?.data?.errors
         if (errors) { Object.entries(errors).forEach(([field, msgs]) => msgs.forEach(msg => notify({ text: field + ': ' + msg, type: 'error' }))) }

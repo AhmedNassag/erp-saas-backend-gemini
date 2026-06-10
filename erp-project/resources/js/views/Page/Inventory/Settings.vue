@@ -54,7 +54,7 @@
         </div>
         <div class="fv-row mb-7">
           <label class="fs-6 fw-semibold mb-2">Logo</label>
-          <div v-if="editingId && form.imagePreview" class="mb-3">
+          <div v-if="form.imagePreview" class="mb-3">
             <img :src="form.imagePreview" class="rounded border" style="max-width:150px;max-height:150px;object-fit:cover" />
           </div>
           <input type="file" ref="imageInput" accept="image/png,image/jpg,image/jpeg" class="form-control form-control-solid" @change="onImageChange" />
@@ -94,6 +94,9 @@ export default {
     this.loading = false
   },
   methods: {
+    resetFileInputs() {
+      if (this.$refs.imageInput) this.$refs.imageInput.value = ''
+    },
     async loadSetting() {
       try { const d = await this.api.getAll(); if (d) { this.editingId = d.id; this.form.companyName = d.companyName || ''; this.form.companyPhone = d.companyPhone || ''; this.form.companyAdress = d.companyAdress || ''; this.form.currency_id = d.currency_id || ''; this.form.client_id = d.client_id || ''; this.form.warehouse_id = d.warehouse_id || ''; this.form.developed_by = d.developed_by || ''; this.form.footer = d.footer || ''; this.form.imagePreview = d.image || null } }
       catch { notify({ text: 'Failed to load settings', type: 'error' }) }
@@ -120,7 +123,8 @@ export default {
         if (this.form.imageFile) { fd.append('image', this.form.imageFile) }
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)
         notify({ text: 'Settings saved successfully', type: 'success' })
-        this.saving = false
+        this.resetFileInputs()
+        this.saving = false;
         this.loadSetting()
       } catch (e) {
         const errors = e.response?.data?.errors

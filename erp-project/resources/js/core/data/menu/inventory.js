@@ -38,16 +38,16 @@ export default {
       permission: 'read-unit',
     },
     {
+      title: 'Products',
+      icon: 'ki-outline ki-shield-tick',
+      route: '/inventory/products',
+      permission: 'read-product',
+    },
+    {
       title: 'Settings',
       icon: 'ki-outline ki-setting-2',
       route: '/inventory/settings',
       permission: 'read-setting',
-    },
-    {
-      title: 'Products',
-      icon: 'ki-outline ki-box',
-      route: '/inventory/products',
-      permission: 'read-product',
     },
   ],
 }

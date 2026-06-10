@@ -144,7 +144,10 @@ export default {
         if (!this.form.is_main) { fd.append('category_id', this.form.category_id) }
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)
         notify({ text: this.editingId ? 'Category updated' : 'Category created', type: 'success' })
-        this.modal.hide(); this.loadItems(); this.loadParents()
+        this.modal.hide();
+        this.saving = false;
+        this.loadItems();
+        this.loadParents()
       } catch (e) {
         const errors = e.response?.data?.errors
         if (errors) { Object.entries(errors).forEach(([field, msgs]) => msgs.forEach(msg => notify({ text: field + ': ' + msg, type: 'error' }))) }
