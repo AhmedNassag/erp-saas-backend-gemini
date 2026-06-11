@@ -42,6 +42,18 @@ export default [
     meta: { title: 'Settings', module: 'Inventory' }
   },
   {
+    path: 'inventory/print-barcode',
+    name: 'PrintBarcode',
+    component: () => import('../../views/Page/Inventory/PrintBarcode.vue'),
+    meta: { title: 'Print Barcode', module: 'Inventory' }
+  },
+  {
+    path: 'inventory/products/:id/detail',
+    name: 'ProductDetail',
+    component: () => import('../../views/Page/Inventory/ProductDetail.vue'),
+    meta: { title: 'Product Details', module: 'Inventory' }
+  },
+  {
     path: 'inventory/products',
     name: 'Products',
     component: () => import('../../views/Page/Inventory/Products.vue'),

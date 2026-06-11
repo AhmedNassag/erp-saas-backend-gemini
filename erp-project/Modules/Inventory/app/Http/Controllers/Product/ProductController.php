@@ -55,4 +55,9 @@ class ProductController extends Controller
     {
         return $this->product->changeStatus($id, $request);
     }
+
+    public function getProductsByWarehouseId($warehouseId)
+    {
+        return $this->product->getProductsByWarehouseId($warehouseId);
+    }
 }

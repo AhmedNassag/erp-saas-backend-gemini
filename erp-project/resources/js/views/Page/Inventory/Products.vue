@@ -43,6 +43,9 @@
                 </span>
               </td>
               <td class="text-end">
+                <button class="btn btn-icon btn-bg-light btn-active-color-info btn-sm me-1" @click="$router.push('/inventory/products/'+item.id+'/detail')">
+                  <i class="ki-outline ki-eye fs-2"></i>
+                </button>
                 <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" @click="editItem(item)">
                   <i class="ki-outline ki-pencil fs-2"></i>
                 </button>

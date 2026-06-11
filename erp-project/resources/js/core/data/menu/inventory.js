@@ -44,6 +44,12 @@ export default {
       permission: 'read-product',
     },
     {
+      title: 'Print Barcode',
+      icon: 'ki-outline ki-scan-barcode',
+      route: '/inventory/print-barcode',
+      permission: 'read-product',
+    },
+    {
       title: 'Settings',
       icon: 'ki-outline ki-setting-2',
       route: '/inventory/settings',

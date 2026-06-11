@@ -1,0 +1,70 @@
+.barcode-container {
+  width: 100%;
+}
+.barcode-page {
+  page-break-after: always;
+  display: flex;
+  flex-wrap: wrap;
+}
+.barcode-page.barcodea4 {
+  width: 190mm;
+}
+.barcode-page.barcode_non_a4 {
+  width: 100%;
+}
+.barcode-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+  border: 1px dashed #ddd;
+  padding: 2px;
+  overflow: hidden;
+}
+.barcode-item.style40 {
+  width: 25%;
+  height: 2.5cm;
+}
+.barcode-item.style30 {
+  width: 33.33%;
+  height: 2.6cm;
+}
+.barcode-item.style24 {
+  width: 25%;
+  height: 3.5cm;
+}
+.barcode-item.style20 {
+  width: 25%;
+  height: 2.54cm;
+}
+.barcode-item.style18 {
+  width: 33.33%;
+  height: 4.66cm;
+}
+.barcode-item.style14 {
+  width: 25%;
+  height: 3.38cm;
+}
+.barcode-item.style12 {
+  width: 33.33%;
+  height: 7.2cm;
+}
+.barcode-item.style10 {
+  width: 25%;
+  height: 5.08cm;
+}
+.barcode-name {
+  font-size: 11px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  margin-bottom: 2px;
+}
+.barcode-canvas {
+  max-width: 100%;
+  height: auto;
+}

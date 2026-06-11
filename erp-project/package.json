@@ -27,6 +27,7 @@
         "crypto-js": "^4.2.0",
         "feather-icons": "^4.29.2",
         "jquery": "^3.7.1",
+        "jsbarcode": "^3.12.3",
         "pinia": "^2.1.7",
         "sweetalert2": "^11.15.10",
         "vee-validate": "^4.15.0",

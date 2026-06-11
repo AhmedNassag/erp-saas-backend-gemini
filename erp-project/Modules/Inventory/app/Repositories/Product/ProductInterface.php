@@ -6,4 +6,5 @@ use App\Repositories\Base\BaseInterface;
 
 interface ProductInterface extends BaseInterface
 {
+    public function getProductsByWarehouseId($warehouseId);
 }

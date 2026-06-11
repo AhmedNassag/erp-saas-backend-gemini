@@ -348,4 +348,119 @@ class ProductRepository extends BaseRepository implements ProductInterface
     {
         ProductWarehouse::where('product_id', $productId)->whereNull('deleted_at')->update(['deleted_at' => Carbon::now()]);
     }
+
+    public function show($id, array $with = [])
+    {
+        $product = $this->getModel()->with(['category', 'brand', 'unit', 'unitSale', 'unitPurchase', 'variants', 'productWarehouses.warehouse', 'productWarehouses.productVariant'])->findOrFail($id);
+
+        $productWarehouses = $product->productWarehouses->whereNull('deleted_at')->groupBy('warehouse_id');
+
+        $CountQTY = [];
+        $CountQTY_variants = [];
+        foreach ($productWarehouses as $warehouseId => $pwItems) {
+            $warehouse = $pwItems->first()->warehouse;
+            $noVariant = $pwItems->whereNull('product_variant_id');
+            $withVariant = $pwItems->whereNotNull('product_variant_id');
+
+            if ($noVariant->isNotEmpty()) {
+                $CountQTY[] = [
+                    'mag' => $warehouse->name,
+                    'qte' => $noVariant->sum('qty'),
+                ];
+            }
+
+            foreach ($withVariant as $pw) {
+                $CountQTY_variants[] = [
+                    'mag'     => $warehouse->name,
+                    'variant' => $pw->productVariant->name ?? '',
+                    'qte'     => $pw->qty,
+                ];
+            }
+        }
+
+        return (new \App\Traits\API)->isOk(__('Product Details'))
+            ->setData([
+                'product'           => new ProductResource($product),
+                'CountQTY'          => $CountQTY,
+                'CountQTY_variants' => $CountQTY_variants,
+            ])
+            ->build();
+    }
+
+    public function getProductsByWarehouseId($warehouseId)
+    {
+        // $productIds = ProductWarehouse::where('warehouse_id', $warehouseId)
+        //     ->whereNull('deleted_at')
+        //     ->pluck('product_id')
+        //     ->unique();
+
+        // return Product::whereIn('id', $productIds)
+        //     ->whereNull('deleted_at')
+        //     ->where('status', 1)
+        //     ->select('id', 'code', 'Type_barcode', 'name')
+        //     ->get();
+
+        
+        $data = [];
+        $product_warehouse_data = ProductWarehouse::with('warehouse', 'product', 'productVariant')
+            ->where('warehouse_id', $warehouseId)
+            ->where('deleted_at', '=', null)
+            ->get();
+
+        foreach ($product_warehouse_data as $product_warehouse) {
+
+            if ($product_warehouse->product_variant_id) {
+                $item['product_variant_id'] = $product_warehouse->product_variant_id;
+                $item['code'] = $product_warehouse['productVariant']->name . '-' . $product_warehouse['product']->code;
+                $item['Variant'] = $product_warehouse['productVariant']->name;
+            } else {
+                $item['product_variant_id'] = null;
+                $item['Variant'] = null;
+                $item['code'] = $product_warehouse['product']->code;
+            }
+
+            $item['id'] = $product_warehouse->product_id;
+            $item['name'] = $product_warehouse['product']->name;
+            $item['barcode'] = $product_warehouse['product']->code;
+            $item['Type_barcode'] = $product_warehouse['product']->Type_barcode;
+            $firstimage = explode(',', $product_warehouse['product']->image);
+            $item['image'] = $firstimage[0];
+
+            if ($product_warehouse['product']['unitSale']->operator == '/') {
+                $item['qte_sale'] = $product_warehouse->qte * $product_warehouse['product']['unitSale']->operator_value;
+                $price = $product_warehouse['product']->price / $product_warehouse['product']['unitSale']->operator_value;
+            } else {
+                $item['qte_sale'] = $product_warehouse->qte / $product_warehouse['product']['unitSale']->operator_value;
+                $price = $product_warehouse['product']->price * $product_warehouse['product']['unitSale']->operator_value;
+            }
+
+            if ($product_warehouse['product']['unitPurchase']->operator == '/') {
+                $item['qte_purchase'] = round($product_warehouse->qte * $product_warehouse['product']['unitPurchase']->operator_value, 5);
+            } else {
+                $item['qte_purchase'] = round($product_warehouse->qte / $product_warehouse['product']['unitPurchase']->operator_value, 5);
+            }
+
+            $item['qte'] = $product_warehouse->qte;
+            $item['unitSale'] = $product_warehouse['product']['unitSale']->ShortName;
+            $item['unitPurchase'] = $product_warehouse['product']['unitPurchase']->ShortName;
+
+            if ($product_warehouse['product']->TaxNet !== 0.0) {
+                //Exclusive
+                if ($product_warehouse['product']->tax_method == '1') {
+                    $tax_price = $price * $product_warehouse['product']->TaxNet / 100;
+                    $item['Net_price'] = $price + $tax_price;
+                    // Inxclusive
+                } else {
+                    $item['Net_price'] = $price;
+                }
+            } else {
+                $item['Net_price'] = $price;
+            }
+
+            $data[] = $item;
+        }
+
+        return response()->json($data);
+        
+    }
 }
