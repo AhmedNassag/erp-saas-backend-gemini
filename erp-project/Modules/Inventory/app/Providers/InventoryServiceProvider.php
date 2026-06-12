@@ -19,6 +19,14 @@ use Modules\Inventory\Repositories\Setting\SettingInterface;
 use Modules\Inventory\Repositories\Setting\SettingRepository;
 use Modules\Inventory\Repositories\Product\ProductInterface;
 use Modules\Inventory\Repositories\Product\ProductRepository;
+use Modules\Inventory\Repositories\ProductVariant\ProductVariantRepository;
+use Modules\Inventory\Repositories\ProductWarehouse\ProductWarehouseRepository;
+use Modules\Inventory\Repositories\Adjustment\AdjustmentInterface;
+use Modules\Inventory\Repositories\Adjustment\AdjustmentRepository;
+use Modules\Inventory\Repositories\AdjustmentDetail\AdjustmentDetailRepository;
+use Modules\Inventory\Repositories\Transfer\TransferInterface;
+use Modules\Inventory\Repositories\Transfer\TransferRepository;
+use Modules\Inventory\Repositories\TransferDetail\TransferDetailRepository;
 
 class InventoryServiceProvider extends ModuleServiceProvider
 {
@@ -42,5 +50,11 @@ class InventoryServiceProvider extends ModuleServiceProvider
         $this->app->bind(UnitInterface::class, UnitRepository::class);
         $this->app->bind(SettingInterface::class, SettingRepository::class);
         $this->app->bind(ProductInterface::class, ProductRepository::class);
+        $this->app->bind(ProductVariantRepository::class);
+        $this->app->bind(ProductWarehouseRepository::class);
+        $this->app->bind(AdjustmentInterface::class, AdjustmentRepository::class);
+        $this->app->bind(AdjustmentDetailRepository::class);
+        $this->app->bind(TransferInterface::class, TransferRepository::class);
+        $this->app->bind(TransferDetailRepository::class);
     }
 }

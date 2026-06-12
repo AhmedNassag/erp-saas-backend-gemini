@@ -11,6 +11,8 @@ use Modules\Inventory\Database\Seeders\Currency\CurrencyDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Unit\UnitDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Setting\SettingDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Product\ProductDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\Adjustment\AdjustmentDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\Transfer\TransferDatabaseSeeder;
 use Modules\Core\Models\RoleAndPermission\Role;
 use Modules\Core\Models\RoleAndPermission\Permission;
 
@@ -27,6 +29,8 @@ class InventoryDatabaseSeeder extends Seeder
             UnitDatabaseSeeder::class,
             SettingDatabaseSeeder::class,
             ProductDatabaseSeeder::class,
+            AdjustmentDatabaseSeeder::class,
+            TransferDatabaseSeeder::class,
         ]);
 
         $adminRole = Role::where('name', 'Admin')->where('guard_name', 'tenant')->first();

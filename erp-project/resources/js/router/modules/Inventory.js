@@ -59,4 +59,16 @@ export default [
     component: () => import('../../views/Page/Inventory/Products.vue'),
     meta: { title: 'Products', module: 'Inventory' }
   },
+  {
+    path: 'inventory/adjustments',
+    name: 'Adjustments',
+    component: () => import('../../views/Page/Inventory/Adjustments.vue'),
+    meta: { title: 'Adjustments', module: 'Inventory' }
+  },
+  {
+    path: 'inventory/transfers',
+    name: 'Transfers',
+    component: () => import('../../views/Page/Inventory/Transfers.vue'),
+    meta: { title: 'Transfers', module: 'Inventory' }
+  },
 ]

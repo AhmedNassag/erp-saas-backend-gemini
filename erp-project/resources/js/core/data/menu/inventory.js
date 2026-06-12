@@ -55,5 +55,17 @@ export default {
       route: '/inventory/settings',
       permission: 'read-setting',
     },
+    {
+      title: 'Stock Adjustments',
+      icon: 'ki-outline ki-arrows-loop',
+      route: '/inventory/adjustments',
+      permission: 'read-adjustment',
+    },
+    {
+      title: 'Stock Transfers',
+      icon: 'ki-outline ki-arrow-up-down',
+      route: '/inventory/transfers',
+      permission: 'read-transfer',
+    },
   ],
 }
