@@ -661,15 +661,14 @@ export default {
         this.form.shipping = d.transfer?.shipping || 0
         this.form.GrandTotal = d.transfer?.GrandTotal || 0
         await this.loadUnits()
-        this.details = (d.details || []).map((item, idx) => {
-          // Find current stock from products data
-          const prod = (this.products || []).find(p => p.id === item.product_id && p.product_variant_id === (item.product_variant_id || null))
-          return { ...item, detail_id: idx + 1, unit_name: item.unit || '', current: prod?.qty || 0 }
-        })
         if (this.form.from_warehouse_id) {
           const prodRes = await this.productApi.byWarehouse(this.form.from_warehouse_id)
           this.products = Array.isArray(prodRes) ? prodRes : (prodRes.data || [])
         }
+        this.details = (d.details || []).map((item, idx) => {
+          const prod = (this.products || []).find(p => p.id === item.product_id && p.product_variant_id === (item.product_variant_id || null))
+          return { ...item, detail_id: idx + 1, unit_name: item.unit || '', current: prod?.qty || 0 }
+        })
         this.modal.show()
       } catch { notify({ text: 'Failed to load transfer', type: 'error' }) }
     },
