@@ -12,6 +12,7 @@
       </div>
     </div>
     <div class="card-body pt-0">
+      <PaginationWrapper :currentPage="currentPage" :lastPage="lastPage" :total="total" :perPage="perPage" :search="search" @update:currentPage="onPageChange" @update:perPage="onPerPageChange" @update:search="onSearchChange">
       <div class="table-responsive">
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
           <thead>
@@ -60,6 +61,7 @@
           </tbody>
         </table>
       </div>
+      </PaginationWrapper>
     </div>
     <div class="modal fade" tabindex="-1" ref="modalEl" data-bs-backdrop="static">
       <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -245,9 +247,11 @@ import Brand from '../../../API/Modules/Inventory/Brand/Brand'
 import Unit from '../../../API/Modules/Inventory/Unit/Unit'
 import Swal from 'sweetalert2'
 import { notify } from '@kyvg/vue3-notification'
+import PaginationWrapper from '../../../components/PaginationWrapper.vue'
 
 export default {
   name: 'ProductsView',
+  components: { PaginationWrapper },
   data() {
     return {
       api: new Product('api/v1/inventory/product'),
@@ -255,6 +259,7 @@ export default {
       brandApi: new Brand('api/v1/inventory/brand'),
       unitApi: new Unit('api/v1/inventory/unit'),
       items: [], categories: [], brands: [], units: [], unitSubs: [],
+      currentPage: 1, lastPage: 1, total: 0, perPage: 10, search: '',
       editingId: null, saving: false, modal: null,
       form: {
         code: '', Type_barcode: 'CODE128', name: '', cost: '', price: '',
@@ -273,9 +278,20 @@ export default {
   },
   methods: {
     async loadItems() {
-      try { const d = await this.api.getAll(); this.items = d.data || d }
-      catch { notify({ text: 'Failed to load products', type: 'error' }) }
+      try {
+        const params = { page: this.currentPage, per_page: this.perPage }
+        if (this.search) params.search = this.search
+        const d = await this.api.getAll(params)
+        if (Array.isArray(d)) {
+          this.items = d; this.total = d.length; this.lastPage = 1; this.currentPage = 1
+        } else {
+          this.items = d.data || []; this.total = d.total || 0; this.lastPage = d.lastPage || 1; this.currentPage = d.currentPage || 1
+        }
+      } catch { notify({ text: 'Failed to load products', type: 'error' }) }
     },
+    onPageChange(page) { this.currentPage = page; this.loadItems() },
+    onPerPageChange(val) { this.perPage = val; this.currentPage = 1; this.loadItems() },
+    onSearchChange(val) { this.search = val; this.currentPage = 1; this.loadItems() },
     async loadSelects() {
       try {
         const [cats, brds, uns] = await Promise.all([

@@ -12,6 +12,7 @@
       </div>
     </div>
     <div class="card-body pt-0">
+      <PaginationWrapper :currentPage="currentPage" :lastPage="lastPage" :total="total" :perPage="perPage" :search="search" @update:currentPage="onPageChange" @update:perPage="onPerPageChange" @update:search="onSearchChange">
       <div class="table-responsive">
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
           <thead>
@@ -49,6 +50,7 @@
           </tbody>
         </table>
       </div>
+      </PaginationWrapper>
     </div>
 
     <div class="modal fade" tabindex="-1" ref="detailModalEl" data-bs-backdrop="static">
@@ -333,15 +335,18 @@ import Warehouse from '../../../API/Modules/Core/Warehouse/Warehouse'
 import Product from '../../../API/Modules/Inventory/Product/Product'
 import Swal from 'sweetalert2'
 import { notify } from '@kyvg/vue3-notification'
+import PaginationWrapper from '../../../components/PaginationWrapper.vue'
 
 export default {
   name: 'AdjustmentsView',
+  components: { PaginationWrapper },
   data() {
     return {
       api: new Adjustment('api/v1/inventory/adjustment'),
       warehouseApi: new Warehouse('api/v1/core/warehouse'),
       productApi: new Product('api/v1/inventory/product'),
       items: [], warehouses: [], products: [],
+      currentPage: 1, lastPage: 1, total: 0, perPage: 10, search: '',
       editingId: null, saving: false, modal: null, detailModal: null,
       searchInput: '', searchFocused: false, searchResults: [],
       timer: null,
@@ -357,9 +362,20 @@ export default {
   },
   methods: {
     async loadItems() {
-      try { const d = await this.api.getAll(); this.items = d.data || d }
-      catch { notify({ text: 'Failed to load adjustments', type: 'error' }) }
+      try {
+        const params = { page: this.currentPage, per_page: this.perPage }
+        if (this.search) params.search = this.search
+        const d = await this.api.getAll(params)
+        if (Array.isArray(d)) {
+          this.items = d; this.total = d.length; this.lastPage = 1; this.currentPage = 1
+        } else {
+          this.items = d.data || []; this.total = d.total || 0; this.lastPage = d.lastPage || 1; this.currentPage = d.currentPage || 1
+        }
+      } catch { notify({ text: 'Failed to load adjustments', type: 'error' }) }
     },
+    onPageChange(page) { this.currentPage = page; this.loadItems() },
+    onPerPageChange(val) { this.perPage = val; this.currentPage = 1; this.loadItems() },
+    onSearchChange(val) { this.search = val; this.currentPage = 1; this.loadItems() },
     resetForm() {
       this.form = { warehouse_id: '', date: new Date().toISOString().slice(0, 10), notes: '' }
       this.details = []

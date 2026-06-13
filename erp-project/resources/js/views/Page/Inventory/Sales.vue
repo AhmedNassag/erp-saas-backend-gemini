@@ -13,64 +13,66 @@
     </div>
 
     <div class="card-body pt-0">
-      <div class="table-responsive">
-        <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
-          <thead>
-            <tr class="fw-bold text-muted">
-              <th class="min-w-100px">Date</th>
-              <th class="min-w-120px">Reference</th>
-              <th class="min-w-150px">Client</th>
-              <th class="min-w-150px">Warehouse</th>
-              <th class="min-w-100px">Status</th>
-              <th class="min-w-100px text-end">Grand Total</th>
-              <th class="min-w-100px text-end">Paid</th>
-              <th class="min-w-100px">Payment</th>
-              <th class="min-w-120px">Created By</th>
-              <th class="min-w-50px text-end">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="item in items" :key="item.id">
-              <td>{{ item.date }}</td>
-              <td>{{ item.Ref }}</td>
-              <td>{{ item.client_name }}</td>
-              <td>{{ item.warehouse_name }}</td>
-              <td>
-                <span class="badge fs-7 px-3 py-2 rounded-pill" :class="statusBadge(item.status)">
-                  {{ item.status }}
-                </span>
-              </td>
-              <td class="text-end">{{ item.GrandTotal }}</td>
-              <td class="text-end">{{ item.paid_amount }}</td>
-              <td>
-                <span class="badge fs-7 px-3 py-2 rounded-pill" :class="paymentBadge(item.payment_status)">
-                  {{ item.payment_status }}
-                </span>
-              </td>
-              <td>
-                <span class="text-gray-700 fw-semibold">{{ item.user_name || '-' }}</span>
-              </td>
-              <td class="text-end">
-                <router-link class="btn btn-icon btn-bg-light btn-active-color-info btn-sm me-1" :to="`/inventory/sales/${item.id}/detail`">
-                  <i class="ki-outline ki-eye fs-2"></i>
-                </router-link>
-                <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" @click="editItem(item.id)">
-                  <i class="ki-outline ki-pencil fs-2"></i>
-                </button>
-                <button class="btn btn-icon btn-bg-light btn-active-color-success btn-sm me-1" @click="openPaymentsModal(item)" title="Manage Payments">
-                  <i class="ki-outline ki-credit-cart fs-2"></i>
-                </button>
-                <button class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" @click="deleteItem(item.id)">
-                  <i class="ki-outline ki-trash fs-2"></i>
-                </button>
-              </td>
-            </tr>
-            <tr v-if="!items.length">
-              <td colspan="10" class="text-center text-muted py-10">No sales found</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <PaginationWrapper :currentPage="currentPage" :lastPage="lastPage" :total="total" :perPage="perPage" :search="search" @update:currentPage="onPageChange" @update:perPage="onPerPageChange" @update:search="onSearchChange">
+        <div class="table-responsive">
+          <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
+            <thead>
+              <tr class="fw-bold text-muted">
+                <th class="min-w-100px">Date</th>
+                <th class="min-w-120px">Reference</th>
+                <th class="min-w-150px">Client</th>
+                <th class="min-w-150px">Warehouse</th>
+                <th class="min-w-100px">Status</th>
+                <th class="min-w-100px text-end">Grand Total</th>
+                <th class="min-w-100px text-end">Paid</th>
+                <th class="min-w-100px">Payment</th>
+                <th class="min-w-120px">Created By</th>
+                <th class="min-w-50px text-end">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in items" :key="item.id">
+                <td>{{ item.date }}</td>
+                <td>{{ item.Ref }}</td>
+                <td>{{ item.client_name }}</td>
+                <td>{{ item.warehouse_name }}</td>
+                <td>
+                  <span class="badge fs-7 px-3 py-2 rounded-pill" :class="statusBadge(item.status)">
+                    {{ item.status }}
+                  </span>
+                </td>
+                <td class="text-end">{{ item.GrandTotal }}</td>
+                <td class="text-end">{{ item.paid_amount }}</td>
+                <td>
+                  <span class="badge fs-7 px-3 py-2 rounded-pill" :class="paymentBadge(item.payment_status)">
+                    {{ item.payment_status }}
+                  </span>
+                </td>
+                <td>
+                  <span class="text-gray-700 fw-semibold">{{ item.user_name || '-' }}</span>
+                </td>
+                <td class="text-end">
+                  <router-link class="btn btn-icon btn-bg-light btn-active-color-info btn-sm me-1" :to="`/inventory/sales/${item.id}/detail`">
+                    <i class="ki-outline ki-eye fs-2"></i>
+                  </router-link>
+                  <button class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1" @click="editItem(item.id)">
+                    <i class="ki-outline ki-pencil fs-2"></i>
+                  </button>
+                  <button class="btn btn-icon btn-bg-light btn-active-color-success btn-sm me-1" @click="openPaymentsModal(item)" title="Manage Payments">
+                    <i class="ki-outline ki-credit-cart fs-2"></i>
+                  </button>
+                  <button class="btn btn-icon btn-bg-light btn-active-color-danger btn-sm" @click="deleteItem(item.id)">
+                    <i class="ki-outline ki-trash fs-2"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr v-if="!items.length">
+                <td colspan="10" class="text-center text-muted py-10">No sales found</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </PaginationWrapper>
     </div>
 
     <!-- Detail Modal -->
@@ -667,9 +669,11 @@ import Product from '../../../API/Modules/Inventory/Product/Product'
 import Unit from '../../../API/Modules/Inventory/Unit/Unit'
 import Swal from 'sweetalert2'
 import { notify } from '@kyvg/vue3-notification'
+import PaginationWrapper from '../../../components/PaginationWrapper.vue'
 
 export default {
   name: 'SalesView',
+  components: { PaginationWrapper },
   data() {
     return {
       saleApi: new Sale('api/v1/inventory/sale'),
@@ -679,6 +683,7 @@ export default {
       productApi: new Product('api/v1/inventory/product'),
       unitApi: new Unit('api/v1/inventory/unit'),
       items: [], warehouses: [], products: [], units: [], clients: [],
+      currentPage: 1, lastPage: 1, total: 0, perPage: 10, search: '',
       editingId: null, saving: false, modal: null, detailModal: null, paymentModal: null, editPaymentModal: null,
       searchInput: '', searchFocused: false, searchResults: [],
       timer: null,
@@ -707,9 +712,20 @@ export default {
   },
   methods: {
     async loadItems() {
-      try { const d = await this.saleApi.getAll(); this.items = d.data || d || [] }
-      catch { notify({ text: 'Failed to load sales', type: 'error' }) }
+      try {
+        const params = { page: this.currentPage, per_page: this.perPage }
+        if (this.search) params.search = this.search
+        const d = await this.saleApi.getAll(params)
+        if (Array.isArray(d)) {
+          this.items = d; this.total = d.length; this.lastPage = 1; this.currentPage = 1
+        } else {
+          this.items = d.data || []; this.total = d.total || 0; this.lastPage = d.lastPage || 1; this.currentPage = d.currentPage || 1
+        }
+      } catch { notify({ text: 'Failed to load sales', type: 'error' }) }
     },
+    onPageChange(page) { this.currentPage = page; this.loadItems() },
+    onPerPageChange(val) { this.perPage = val; this.currentPage = 1; this.loadItems() },
+    onSearchChange(val) { this.search = val; this.currentPage = 1; this.loadItems() },
     statusBadge(s) {
       if (s === 'completed') return 'badge-light-success'
       if (s === 'ordered') return 'badge-light-primary'

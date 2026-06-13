@@ -12,6 +12,7 @@
       </div>
     </div>
     <div class="card-body pt-0">
+      <PaginationWrapper :currentPage="currentPage" :lastPage="lastPage" :total="total" :perPage="perPage" :search="search" @update:currentPage="onPageChange" @update:perPage="onPerPageChange" @update:search="onSearchChange">
       <div class="table-responsive">
         <table class="table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4">
           <thead>
@@ -42,6 +43,7 @@
           </tbody>
         </table>
       </div>
+      </PaginationWrapper>
     </div>
 
     <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-50 d-flex align-items-center justify-content-center" v-if="showWizard" style="z-index: 1050;">
@@ -122,14 +124,17 @@
 import API from '../../../API/API'
 import Swal from 'sweetalert2'
 import { notify } from '@kyvg/vue3-notification'
+import PaginationWrapper from '../../../components/PaginationWrapper.vue'
 
 export default {
   name: 'RolesView',
+  components: { PaginationWrapper },
   data() {
     return {
       api: new API('api/v1/core/roles'),
       permissionsApi: new API('api/v1/core/permissions'),
       items: [],
+      currentPage: 1, lastPage: 1, total: 0, perPage: 10, search: '',
       allPermissions: {},
       editingId: null,
       showWizard: false,
@@ -173,9 +178,20 @@ export default {
   },
   methods: {
     async loadItems() {
-      try { const d = await this.api.getAll(); this.items = d.data || d }
-      catch { notify({ text: 'Failed to load roles', type: 'error' }) }
+      try {
+        const params = { page: this.currentPage, per_page: this.perPage }
+        if (this.search) params.search = this.search
+        const d = await this.api.getAll(params)
+        if (Array.isArray(d)) {
+          this.items = d; this.total = d.length; this.lastPage = 1; this.currentPage = 1
+        } else {
+          this.items = d.data || []; this.total = d.total || 0; this.lastPage = d.lastPage || 1; this.currentPage = d.currentPage || 1
+        }
+      } catch { notify({ text: 'Failed to load roles', type: 'error' }) }
     },
+    onPageChange(page) { this.currentPage = page; this.loadItems() },
+    onPerPageChange(val) { this.perPage = val; this.currentPage = 1; this.loadItems() },
+    onSearchChange(val) { this.search = val; this.currentPage = 1; this.loadItems() },
     async loadPermissions() {
       this.loadingPermissions = true
       try {
