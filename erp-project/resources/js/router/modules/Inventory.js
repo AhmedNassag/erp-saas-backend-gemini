@@ -18,6 +18,18 @@ export default [
     meta: { title: 'Categories', module: 'Inventory' }
   },
   {
+    path: 'inventory/expense-categories',
+    name: 'ExpenseCategories',
+    component: () => import('../../views/Page/Inventory/ExpenseCategories.vue'),
+    meta: { title: 'Expense Categories', module: 'Inventory' }
+  },
+  {
+    path: 'inventory/expenses',
+    name: 'Expenses',
+    component: () => import('../../views/Page/Inventory/Expenses.vue'),
+    meta: { title: 'Expenses', module: 'Inventory' }
+  },
+  {
     path: 'inventory/brands',
     name: 'Brands',
     component: () => import('../../views/Page/Inventory/Brands.vue'),

@@ -20,11 +20,23 @@ export default {
       permission: 'read-category',
     },
     {
-      title: 'Brands',
-      icon: 'ki-outline ki-brifecase-tick',
-      route: '/inventory/brands',
-      permission: 'read-brand',
-    },
+    title: 'Expense Categories',
+    icon: 'ki-outline ki-category',
+    route: '/inventory/expense-categories',
+    permission: 'read-expense-category',
+  },
+  {
+    title: 'Expenses',
+    icon: 'ki-outline ki-category',
+    route: '/inventory/expenses',
+    permission: 'read-expense',
+  },
+  {
+    title: 'Brands',
+    icon: 'ki-outline ki-brifecase-tick',
+    route: '/inventory/brands',
+    permission: 'read-brand',
+  },
     {
       title: 'Currencies',
       icon: 'ki-outline ki-dollar',

@@ -27,6 +27,10 @@ use Modules\Inventory\Repositories\AdjustmentDetail\AdjustmentDetailRepository;
 use Modules\Inventory\Repositories\Transfer\TransferInterface;
 use Modules\Inventory\Repositories\Transfer\TransferRepository;
 use Modules\Inventory\Repositories\TransferDetail\TransferDetailRepository;
+use Modules\Inventory\Repositories\ExpenseCategory\ExpenseCategoryInterface;
+use Modules\Inventory\Repositories\ExpenseCategory\ExpenseCategoryRepository;
+use Modules\Inventory\Repositories\Expense\ExpenseInterface;
+use Modules\Inventory\Repositories\Expense\ExpenseRepository;
 
 class InventoryServiceProvider extends ModuleServiceProvider
 {
@@ -56,5 +60,7 @@ class InventoryServiceProvider extends ModuleServiceProvider
         $this->app->bind(AdjustmentDetailRepository::class);
         $this->app->bind(TransferInterface::class, TransferRepository::class);
         $this->app->bind(TransferDetailRepository::class);
+        $this->app->bind(ExpenseCategoryInterface::class, ExpenseCategoryRepository::class);
+        $this->app->bind(ExpenseInterface::class, ExpenseRepository::class);
     }
 }

@@ -13,6 +13,8 @@ use Modules\Inventory\Database\Seeders\Setting\SettingDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Product\ProductDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Adjustment\AdjustmentDatabaseSeeder;
 use Modules\Inventory\Database\Seeders\Transfer\TransferDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\ExpenseCategory\ExpenseCategoryDatabaseSeeder;
+use Modules\Inventory\Database\Seeders\Expense\ExpenseDatabaseSeeder;
 use Modules\Core\Models\RoleAndPermission\Role;
 use Modules\Core\Models\RoleAndPermission\Permission;
 
@@ -31,6 +33,8 @@ class InventoryDatabaseSeeder extends Seeder
             ProductDatabaseSeeder::class,
             AdjustmentDatabaseSeeder::class,
             TransferDatabaseSeeder::class,
+            ExpenseCategoryDatabaseSeeder::class,
+            ExpenseDatabaseSeeder::class,
         ]);
 
         $adminRole = Role::where('name', 'Admin')->where('guard_name', 'tenant')->first();
