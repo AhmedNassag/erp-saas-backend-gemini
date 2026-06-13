@@ -79,5 +79,11 @@ export default {
       route: '/inventory/transfers',
       permission: 'read-transfer',
     },
+    {
+      title: 'Purchases',
+      icon: 'ki-outline ki-cart',
+      route: '/inventory/purchases',
+      permission: 'read-purchase',
+    },
   ],
 }

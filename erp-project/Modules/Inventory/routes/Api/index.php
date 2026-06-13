@@ -12,3 +12,5 @@ require __DIR__ . '/Adjustment/AdjustmentRoutes.php';
 require __DIR__ . '/Transfer/TransferRoutes.php';
 require __DIR__ . '/ExpenseCategory/ExpenseCategoryRoutes.php';
 require __DIR__ . '/Expense/ExpenseRoutes.php';
+require __DIR__ . '/Purchase/PurchaseRoutes.php';
+require __DIR__ . '/PaymentPurchase/PaymentPurchaseRoutes.php';

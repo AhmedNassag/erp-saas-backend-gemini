@@ -31,6 +31,11 @@ use Modules\Inventory\Repositories\ExpenseCategory\ExpenseCategoryInterface;
 use Modules\Inventory\Repositories\ExpenseCategory\ExpenseCategoryRepository;
 use Modules\Inventory\Repositories\Expense\ExpenseInterface;
 use Modules\Inventory\Repositories\Expense\ExpenseRepository;
+use Modules\Inventory\Repositories\Purchase\PurchaseInterface;
+use Modules\Inventory\Repositories\Purchase\PurchaseRepository;
+use Modules\Inventory\Repositories\PurchaseDetail\PurchaseDetailRepository;
+use Modules\Inventory\Repositories\PaymentPurchase\PaymentPurchaseInterface;
+use Modules\Inventory\Repositories\PaymentPurchase\PaymentPurchaseRepository;
 
 class InventoryServiceProvider extends ModuleServiceProvider
 {
@@ -62,5 +67,8 @@ class InventoryServiceProvider extends ModuleServiceProvider
         $this->app->bind(TransferDetailRepository::class);
         $this->app->bind(ExpenseCategoryInterface::class, ExpenseCategoryRepository::class);
         $this->app->bind(ExpenseInterface::class, ExpenseRepository::class);
+        $this->app->bind(PurchaseInterface::class, PurchaseRepository::class);
+        $this->app->bind(PurchaseDetailRepository::class);
+        $this->app->bind(PaymentPurchaseInterface::class, PaymentPurchaseRepository::class);
     }
 }

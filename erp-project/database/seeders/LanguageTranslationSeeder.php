@@ -86,7 +86,7 @@ class LanguageTranslationSeeder extends Seeder
             ['common', 'back',     ['en' => 'Back',      'ar' => 'رجوع',    'fr' => 'Retour']],
             ['common', 'next',     ['en' => 'Next',      'ar' => 'التالي',  'fr' => 'Suivant']],
             ['common', 'actions',  ['en' => 'Actions',   'ar' => 'الإجراءات', 'fr' => 'Actions']],
-            ['common', 'status',   ['en' => 'Status',    'ar' => 'الحالة',  'fr' => 'Statut']],
+            ['common', 'status',   ['en' => 'Status',    'ar' => 'الحالة',  'fr' => 'status']],
             ['common', 'active',   ['en' => 'Active',    'ar' => 'نشط',     'fr' => 'Actif']],
             ['common', 'inactive', ['en' => 'Inactive',  'ar' => 'غير نشط', 'fr' => 'Inactif']],
             ['common', 'yes',      ['en' => 'Yes',       'ar' => 'نعم',     'fr' => 'Oui']],
