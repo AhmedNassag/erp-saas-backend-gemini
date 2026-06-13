@@ -458,6 +458,8 @@ class ProductRepository extends BaseRepository implements ProductInterface
             $item['Type_barcode']     = $productWarehouse['product']->Type_barcode;
             $item['cost']             = $productWarehouse['product']->cost;
             $item['unit_purchase_id'] = $productWarehouse['product']->unit_purchase_id;
+            $item['unit_sale_id']    = $productWarehouse['product']->unit_sale_id;
+            $item['price']           = $productWarehouse['product']->price;
             $firstimage               = explode(',', $productWarehouse['product']->image);
             $item['image']            = $firstimage[0];
 

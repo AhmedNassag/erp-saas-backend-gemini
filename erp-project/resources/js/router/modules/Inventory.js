@@ -95,4 +95,40 @@ export default [
     component: () => import('../../views/Page/Inventory/PurchaseDetail.vue'),
     meta: { title: 'Purchase Details', module: 'Inventory' }
   },
+  {
+    path: 'inventory/purchase-returns',
+    name: 'PurchaseReturns',
+    component: () => import('../../views/Page/Inventory/PurchaseReturns.vue'),
+    meta: { title: 'Purchase Returns', module: 'Inventory' }
+  },
+  {
+    path: 'inventory/purchase-returns/:id/detail',
+    name: 'PurchaseReturnDetail',
+    component: () => import('../../views/Page/Inventory/PurchaseReturnDetail.vue'),
+    meta: { title: 'Purchase Return Details', module: 'Inventory' }
+  },
+  {
+    path: 'inventory/sales',
+    name: 'Sales',
+    component: () => import('../../views/Page/Inventory/Sales.vue'),
+    meta: { title: 'Sales', module: 'Inventory' }
+  },
+  {
+    path: 'inventory/sales/:id/detail',
+    name: 'SaleDetail',
+    component: () => import('../../views/Page/Inventory/SaleDetail.vue'),
+    meta: { title: 'Sale Details', module: 'Inventory' }
+  },
+  {
+    path: 'inventory/sale-returns',
+    name: 'SaleReturns',
+    component: () => import('../../views/Page/Inventory/SaleReturns.vue'),
+    meta: { title: 'Sale Returns', module: 'Inventory' }
+  },
+  {
+    path: 'inventory/sale-returns/:id/detail',
+    name: 'SaleReturnDetail',
+    component: () => import('../../views/Page/Inventory/SaleReturnDetail.vue'),
+    meta: { title: 'Sale Return Details', module: 'Inventory' }
+  },
 ]

@@ -85,5 +85,23 @@ export default {
       route: '/inventory/purchases',
       permission: 'read-purchase',
     },
+    {
+      title: 'Purchase Returns',
+      icon: 'ki-outline ki-arrow-left',
+      route: '/inventory/purchase-returns',
+      permission: 'read-purchase-return',
+    },
+    {
+      title: 'Sales',
+      icon: 'ki-outline ki-cart',
+      route: '/inventory/sales',
+      permission: 'read-sale',
+    },
+    {
+      title: 'Sale Returns',
+      icon: 'ki-outline ki-arrow-left',
+      route: '/inventory/sale-returns',
+      permission: 'read-sale-return',
+    },
   ],
 }

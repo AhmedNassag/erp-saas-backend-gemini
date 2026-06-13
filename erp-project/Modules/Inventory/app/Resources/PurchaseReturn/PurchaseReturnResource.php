@@ -1,0 +1,35 @@
+<?php
+
+namespace Modules\Inventory\Resources\PurchaseReturn;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+use Modules\Inventory\Resources\PaymentPurchaseReturn\PaymentPurchaseReturnResource;
+
+class PurchaseReturnResource extends JsonResource
+{
+    public function toArray($request): array
+    {
+        return [
+            'id'                   => $this->id,
+            'date'                 => $this->date,
+            'Ref'                  => $this->Ref,
+            'provider_id'          => $this->provider_id,
+            'provider_name'        => $this->provider ? $this->provider->name : null,
+            'warehouse_id'         => $this->warehouse_id,
+            'warehouse_name'       => $this->warehouse ? $this->warehouse->name : null,
+            'tax_rate'             => $this->tax_rate,
+            'TaxNet'               => $this->TaxNet,
+            'discount'             => $this->discount,
+            'shipping'             => $this->shipping,
+            'GrandTotal'           => $this->GrandTotal,
+            'paid_amount'          => $this->paid_amount,
+            'payment_status'       => $this->payment_status,
+            'status'               => $this->status,
+            'notes'                => $this->notes,
+            'items'                => $this->items,
+            'user_id'              => $this->user_id,
+            'user_name'            => $this->user ? $this->user->name : null,
+            'payment_purchase_returns' => PaymentPurchaseReturnResource::collection($this->whenLoaded('paymentPurchaseReturns')),
+        ];
+    }
+}

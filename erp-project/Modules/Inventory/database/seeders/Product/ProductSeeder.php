@@ -8,6 +8,8 @@ use Modules\Inventory\Models\Product\Product;
 use Modules\Inventory\Models\Category\Category;
 use Modules\Inventory\Models\Brand\Brand;
 use Modules\Inventory\Models\Unit\Unit;
+use Modules\Core\Models\Warehouse\Warehouse;
+use Modules\Inventory\Models\ProductWarehouse\ProductWarehouse;
 
 class ProductSeeder extends Seeder
 {
@@ -59,7 +61,15 @@ class ProductSeeder extends Seeder
             ];
 
             foreach ($products as $data) {
-                Product::create($data);
+                $product          = Product::create($data);
+                $warehouses       = Warehouse::get();
+                foreach ($warehouses as $warehouse) {
+                    $productWarehouse = ProductWarehouse::create([
+                        'product_id'   => $product->id,
+                        'warehouse_id' => $warehouse->id,
+                        'qty'          => 0,
+                    ]);
+                }
             }
 
             DB::commit();

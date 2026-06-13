@@ -373,9 +373,7 @@
                         </div>
                       </td>
                       <td class="text-center">
-                        <select v-model="d.purchase_unit_id" class="form-select form-select-sm border-0 bg-light fw-semibold text-center" @change="updateUnitName(i)">
-                          <option v-for="u in units" :key="u.id" :value="u.id">{{ u.shortName }}</option>
-                        </select>
+                        <span class="fw-semibold text-gray-700">{{ d.unit_name }}</span>
                       </td>
                       <td class="text-center">
                         <span class="fw-bold">{{ d.total }}</span>

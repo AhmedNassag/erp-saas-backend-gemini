@@ -36,6 +36,21 @@ use Modules\Inventory\Repositories\Purchase\PurchaseRepository;
 use Modules\Inventory\Repositories\PurchaseDetail\PurchaseDetailRepository;
 use Modules\Inventory\Repositories\PaymentPurchase\PaymentPurchaseInterface;
 use Modules\Inventory\Repositories\PaymentPurchase\PaymentPurchaseRepository;
+use Modules\Inventory\Repositories\PurchaseReturn\PurchaseReturnInterface;
+use Modules\Inventory\Repositories\PurchaseReturn\PurchaseReturnRepository;
+use Modules\Inventory\Repositories\PurchaseReturnDetail\PurchaseReturnDetailRepository;
+use Modules\Inventory\Repositories\PaymentPurchaseReturn\PaymentPurchaseReturnInterface;
+use Modules\Inventory\Repositories\PaymentPurchaseReturn\PaymentPurchaseReturnRepository;
+use Modules\Inventory\Repositories\Sale\SaleInterface;
+use Modules\Inventory\Repositories\Sale\SaleRepository;
+use Modules\Inventory\Repositories\SaleDetail\SaleDetailRepository;
+use Modules\Inventory\Repositories\PaymentSale\PaymentSaleInterface;
+use Modules\Inventory\Repositories\PaymentSale\PaymentSaleRepository;
+use Modules\Inventory\Repositories\SaleReturn\SaleReturnInterface;
+use Modules\Inventory\Repositories\SaleReturn\SaleReturnRepository;
+use Modules\Inventory\Repositories\SaleReturnDetail\SaleReturnDetailRepository;
+use Modules\Inventory\Repositories\PaymentSaleReturn\PaymentSaleReturnInterface;
+use Modules\Inventory\Repositories\PaymentSaleReturn\PaymentSaleReturnRepository;
 
 class InventoryServiceProvider extends ModuleServiceProvider
 {
@@ -70,5 +85,14 @@ class InventoryServiceProvider extends ModuleServiceProvider
         $this->app->bind(PurchaseInterface::class, PurchaseRepository::class);
         $this->app->bind(PurchaseDetailRepository::class);
         $this->app->bind(PaymentPurchaseInterface::class, PaymentPurchaseRepository::class);
+        $this->app->bind(PurchaseReturnInterface::class, PurchaseReturnRepository::class);
+        $this->app->bind(PurchaseReturnDetailRepository::class);
+        $this->app->bind(PaymentPurchaseReturnInterface::class, PaymentPurchaseReturnRepository::class);
+        $this->app->bind(SaleInterface::class, SaleRepository::class);
+        $this->app->bind(SaleDetailRepository::class);
+        $this->app->bind(PaymentSaleInterface::class, PaymentSaleRepository::class);
+        $this->app->bind(SaleReturnInterface::class, SaleReturnRepository::class);
+        $this->app->bind(SaleReturnDetailRepository::class);
+        $this->app->bind(PaymentSaleReturnInterface::class, PaymentSaleReturnRepository::class);
     }
 }

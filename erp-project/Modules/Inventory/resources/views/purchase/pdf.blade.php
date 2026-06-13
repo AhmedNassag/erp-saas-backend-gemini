@@ -37,8 +37,8 @@
       <tr><td>Date</td><td>{{ $purchase->date }}</td></tr>
       <tr><td>Supplier</td><td>{{ $purchase->provider->name ?? 'N/A' }}</td></tr>
       <tr><td>Warehouse</td><td>{{ $purchase->warehouse->name ?? 'N/A' }}</td></tr>
-      <tr><td>Status</td><td>{{ $purchase->statut }}</td></tr>
-      <tr><td>Payment</td><td>{{ $purchase->payment_statut }}</td></tr>
+      <tr><td>Status</td><td>{{ $purchase->status }}</td></tr>
+      <tr><td>Payment</td><td>{{ $purchase->payment_status }}</td></tr>
     </table>
   </div>
 
