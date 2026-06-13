@@ -27,6 +27,11 @@ class Branch extends TenantBaseModel implements HasMedia
     protected static function boot()
     {
         parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->code)) {
+                $model->code = static::getNumberOrder();
+            }
+        });
         // static::deleting(function ($model) {
         //     if (
         //         $model->branches()->count() > 0
@@ -34,6 +39,25 @@ class Branch extends TenantBaseModel implements HasMedia
         //         throw new \Exception(__('Can Not Delete Beacause There Is A Related Data'));
         //     }
         // });
+    }
+
+    public static function getNumberOrder()
+    {
+        $last = static::withTrashed()->latest('id')->first();
+        if ($last && !empty($last->code)) {
+            $parts = explode('_', $last->code);
+            $lastNumber = isset($parts[1]) ? (int)$parts[1] : 0;
+            $newNumber = $lastNumber + 1;
+            $code = 'BR_' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        } else {
+            $code = 'BR_0001';
+        }
+        while (static::where('code', $code)->exists()) {
+            $lastNumber = (int)explode('_', $code)[1];
+            $newNumber = $lastNumber + 1;
+            $code = 'BR_' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        }
+        return $code;
     }
 
 

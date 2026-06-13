@@ -16,6 +16,14 @@ use Modules\Inventory\Repositories\Unit\UnitRepository;
 
 class TransferRepository extends BaseRepository implements TransferInterface
 {
+    public function __construct(
+        private UnitRepository $unitRepository,
+        private ProductRepository $productRepository,
+        private ProductWarehouseRepository $productWarehouseRepository,
+        private WarehouseRepository $warehouseRepository,
+        private TransferDetailRepository $transferDetailsRepository,
+    ) {}
+
     protected function getModel(): \Illuminate\Database\Eloquent\Model
     {
         return new Transfer();
@@ -36,30 +44,10 @@ class TransferRepository extends BaseRepository implements TransferInterface
         return 'Transfer';
     }
 
-    protected function getTransferDetailsRepository()
-    {
-        return new TransferDetailRepository();
-    }
-
-    protected function getProductWarehouseRepository()
-    {
-        return new ProductWarehouseRepository();
-    }
-
-    protected function getWarehouseRepository()
-    {
-        return new WarehouseRepository();
-    }
-
-    protected function getUnitRepository()
-    {
-        return new UnitRepository();
-    }
-
     public function show($id, array $with = [])
     {
         $transfer   = $this->getModel()->with(['transferDetails', 'fromWarehouse', 'toWarehouse', 'user'])->findOrFail($id);
-        $warehouses = $this->getWarehouseRepository()->getModel()->whereNull('deleted_at')->get();
+        $warehouses = $this->warehouseRepository->getModel()->whereNull('deleted_at')->get();
 
         $details = [];
         foreach ($transfer->transferDetails as $detail) {
@@ -93,11 +81,6 @@ class TransferRepository extends BaseRepository implements TransferInterface
                 'details'    => $details,
             ])
             ->build();
-    }
-
-    protected function getProductRepository()
-    {
-        return new ProductRepository();
     }
 
 
@@ -137,11 +120,11 @@ class TransferRepository extends BaseRepository implements TransferInterface
             DB::beginTransaction();
 
             $transfer   = $this->getModel()->findOrFail($id);
-            $oldDetails = $this->getTransferDetailsRepository()->getModel()->where('transfer_id', $id)->get();
+            $oldDetails = $this->transferDetailsRepository->getModel()->where('transfer_id', $id)->get();
 
             $this->adjustWarehouseQuantity($transfer, $oldDetails);
 
-            $this->getTransferDetailsRepository()->getModel()->where('transfer_id', $id)->delete();
+            $this->transferDetailsRepository->getModel()->where('transfer_id', $id)->delete();
 
             $data            = $request->validated();
             $data['items']   = sizeof($request['details']);
@@ -172,11 +155,11 @@ class TransferRepository extends BaseRepository implements TransferInterface
             DB::beginTransaction();
 
             $transfer   = $this->getModel()->findOrFail($id);
-            $oldDetails = $this->getTransferDetailsRepository()->getModel()->where('transfer_id', $id)->get();
+            $oldDetails = $this->transferDetailsRepository->getModel()->where('transfer_id', $id)->get();
 
             $this->adjustWarehouseQuantity($transfer, $oldDetails);
 
-            $this->getTransferDetailsRepository()->getModel()->where('transfer_id', $id)->delete();
+            $this->transferDetailsRepository->getModel()->where('transfer_id', $id)->delete();
 
             $transfer->delete();
 
@@ -199,11 +182,11 @@ class TransferRepository extends BaseRepository implements TransferInterface
     {
         try {
             foreach ($details as $value) {
-                $unit = $this->getUnitRepository()->getModel()->where('id', $value['purchase_unit_id'])->first();
+                $unit = $this->unitRepository->getModel()->where('id', $value['purchase_unit_id'])->first();
                 if ($transfer->status == "completed") {
                     if (isset($value['product_variant_id']) && $value['product_variant_id'] !== null) {
                         //decrease the quantity from warehouse (from_warehouse)
-                        $product_warehouse_from = $this->getProductWarehouseRepository()->getModel()
+                        $product_warehouse_from = $this->productWarehouseRepository->getModel()
                             ->whereNull('deleted_at')
                             ->where('warehouse_id', $transfer->from_warehouse_id)
                             ->where('product_id', $value['product_id'])
@@ -220,7 +203,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                         }
 
                         //increase the quantity to warehouse (to_warehouse)
-                        $product_warehouse_to = $this->getProductWarehouseRepository()->getModel()
+                        $product_warehouse_to = $this->productWarehouseRepository->getModel()
                             ->whereNull('deleted_at')
                             ->where('warehouse_id', $transfer->to_warehouse_id)
                             ->where('product_id', $value['product_id'])
@@ -237,7 +220,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                         }
                     } else {
                         //decrease the quantity from warehouse (from_warehouse)
-                        $product_warehouse_from = $this->getProductWarehouseRepository()->getModel()
+                        $product_warehouse_from = $this->productWarehouseRepository->getModel()
                             ->whereNull('deleted_at')
                             ->where('warehouse_id', $transfer->from_warehouse_id)
                             ->where('product_id', $value['product_id'])
@@ -253,7 +236,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                         }
 
                         //increase the quantity to warehouse (to_warehouse)
-                        $product_warehouse_to = $this->getProductWarehouseRepository()->getModel()
+                        $product_warehouse_to = $this->productWarehouseRepository->getModel()
                             ->whereNull('deleted_at')
                             ->where('warehouse_id', $transfer->to_warehouse_id)
                             ->where('product_id', $value['product_id'])
@@ -270,7 +253,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                     }
                 } elseif ($transfer->status == "sent") {
                     if (isset($value['product_variant_id']) && $value['product_variant_id'] !== null) {
-                        $product_warehouse_from = $this->getProductWarehouseRepository()->getModel()
+                        $product_warehouse_from = $this->productWarehouseRepository->getModel()
                             ->whereNull('deleted_at')
                             ->where('warehouse_id', $transfer->from_warehouse_id)
                             ->where('product_id', $value['product_id'])
@@ -286,7 +269,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                             $product_warehouse_from->save();
                         }
                     } else {
-                        $product_warehouse_from = $this->getProductWarehouseRepository()->getModel()
+                        $product_warehouse_from = $this->productWarehouseRepository->getModel()
                             ->whereNull('deleted_at')
                             ->where('warehouse_id', $transfer->from_warehouse_id)
                             ->where('product_id', $value['product_id'])
@@ -315,7 +298,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                 $transferDetails['discount_method']    = $value['discount_method'] ?? '1';
                 $transferDetails['total']              = $value['total'] ?? 0;
 
-                $this->getTransferDetailsRepository()->getModel()->insert($transferDetails);
+                $this->transferDetailsRepository->getModel()->insert($transferDetails);
             }
         } catch (\Exception $e) {
             throw $e;
@@ -330,15 +313,15 @@ class TransferRepository extends BaseRepository implements TransferInterface
         foreach ($oldDetails as $key => $value) {
             //check if detail has purchase_unit_id Or Null
             if($value['purchase_unit_id'] !== null){
-                $unit = $this->getUnitRepository()->getModel()->where('id', $value['purchase_unit_id'])->first();
+                $unit = $this->unitRepository->getModel()->where('id', $value['purchase_unit_id'])->first();
             } else {
-                $product_unit_purchase_id = $this->getProductRepository()->getModel()->with('unitPurchase')->where('id', $value['product_id'])->first();
-                $unit                     = $this->getUnitRepository()->getModel()->where('id', $product_unit_purchase_id['unitPurchase']->id)->first();
+                $product_unit_purchase_id = $this->productRepository->getModel()->with('unitPurchase')->where('id', $value['product_id'])->first();
+                $unit                     = $this->unitRepository->getModel()->where('id', $product_unit_purchase_id['unitPurchase']->id)->first();
             } 
 
             if ($transfer->status == "completed") {
                 if (isset($value['product_variant_id']) && $value['product_variant_id'] !== null) {
-                    $warehouse_from_variant = $this->getProductWarehouseRepository()->getModel()
+                    $warehouse_from_variant = $this->productWarehouseRepository->getModel()
                         ->whereNull('deleted_at')
                         ->where('warehouse_id', $transfer->from_warehouse_id)
                         ->where('product_id', $value['product_id'])
@@ -354,7 +337,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                         $warehouse_from_variant->save();
                     }
 
-                    $warehouse_to_variant = $this->getProductWarehouseRepository()->getModel()
+                    $warehouse_to_variant = $this->productWarehouseRepository->getModel()
                         ->whereNull('deleted_at')
                         ->where('warehouse_id', $transfer->to_warehouse_id)
                         ->where('product_id', $value['product_id'])
@@ -371,7 +354,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                     }
 
                 } else {
-                    $warehouse_from = $this->getProductWarehouseRepository()->getModel()
+                    $warehouse_from = $this->productWarehouseRepository->getModel()
                         ->whereNull('deleted_at')
                         ->where('warehouse_id', $transfer->from_warehouse_id)
                         ->where('product_id', $value['product_id'])
@@ -386,7 +369,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                         $warehouse_from->save();
                     }
 
-                    $warehouse_to = $this->getProductWarehouseRepository()->getModel()
+                    $warehouse_to = $this->productWarehouseRepository->getModel()
                         ->whereNull('deleted_at')
                         ->where('warehouse_id', $transfer->to_warehouse_id)
                         ->where('product_id', $value['product_id'])
@@ -404,7 +387,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
 
             } elseif ($transfer->status == "sent") {
                 if (isset($value['product_variant_id']) && $value['product_variant_id'] !== null) {
-                    $sent_variant_to = $this->getProductWarehouseRepository()->getModel()
+                    $sent_variant_to = $this->productWarehouseRepository->getModel()
                         ->whereNull('deleted_at')
                         ->where('warehouse_id', $transfer->from_warehouse_id)
                         ->where('product_id', $value['product_id'])
@@ -420,7 +403,7 @@ class TransferRepository extends BaseRepository implements TransferInterface
                         $sent_variant_to->save();
                     }
                 } else {
-                    $sent_variant_from = $this->getProductWarehouseRepository()->getModel()
+                    $sent_variant_from = $this->productWarehouseRepository->getModel()
                         ->whereNull('deleted_at')
                         ->where('warehouse_id', $transfer->from_warehouse_id)
                         ->where('product_id', $value['product_id'])

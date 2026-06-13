@@ -17,6 +17,7 @@
           <thead>
             <tr class="fw-bold text-muted">
               <th class="min-w-150px">Name</th>
+              <th class="min-w-100px">Code</th>
               <th class="min-w-100px">Mobile</th>
               <th class="min-w-100px">Branch</th>
               <th class="min-w-100px">Area</th>
@@ -31,6 +32,7 @@
           <tbody>
             <tr v-for="item in items" :key="item.id">
               <td>{{ item.name }}</td>
+              <td>{{ item.code }}</td>
               <td>{{ item.mobile }}</td>
               <td>{{ item.branch_name || '-' }}</td>
               <td>{{ item.area_name || '-' }}</td>

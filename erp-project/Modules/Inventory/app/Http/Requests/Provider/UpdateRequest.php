@@ -10,7 +10,6 @@ class UpdateRequest extends FormRequest
     {
         $roles = [
             'name'     => 'required|string|unique:tenant.providers,name,'.$this->id.',id,deleted_at,NULL',
-            'code'     => 'required|unique:tenant.providers,code,'.$this->id.',id,deleted_at,NULL',
             'phone'    => 'required|unique:tenant.providers,phone,'.$this->id.',id,deleted_at,NULL',
             'area_id'  => 'required|exists:tenant.areas,id',
             'adresse'  => 'nullable|string',
@@ -27,8 +26,6 @@ class UpdateRequest extends FormRequest
             'name.required'     => trans('validation.required'),
             'name.string'       => trans('validation.string'),
             'name.unique'       => trans('validation.unique'),
-            'code.required'     => trans('validation.required'),
-            'code.unique'       => trans('validation.unique'),
             'phone.required'    => trans('validation.required'),
             'phone.unique'      => trans('validation.unique'),
             'area_id.required'  => trans('validation.required'),

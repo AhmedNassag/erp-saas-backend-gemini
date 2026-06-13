@@ -20,6 +20,30 @@ class Provider extends TenantBaseModel implements HasMedia
     protected static function boot()
     {
         parent::boot();
+        static::creating(function ($model) {
+            if (empty($model->code)) {
+                $model->code = static::getNumberOrder();
+            }
+        });
+    }
+
+    public static function getNumberOrder()
+    {
+        $last = static::withTrashed()->latest('id')->first();
+        if ($last && !empty($last->code)) {
+            $parts = explode('_', $last->code);
+            $lastNumber = isset($parts[1]) ? (int)$parts[1] : 0;
+            $newNumber = $lastNumber + 1;
+            $code = 'PRV_' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        } else {
+            $code = 'PRV_0001';
+        }
+        while (static::where('code', $code)->exists()) {
+            $lastNumber = (int)explode('_', $code)[1];
+            $newNumber = $lastNumber + 1;
+            $code = 'PRV_' . str_pad($newNumber, 4, '0', STR_PAD_LEFT);
+        }
+        return $code;
     }
 
     protected $fillable = [

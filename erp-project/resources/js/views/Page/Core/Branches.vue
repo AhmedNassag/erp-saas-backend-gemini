@@ -75,10 +75,6 @@
                 <input type="text" v-model="form.name" class="form-control form-control-solid" required />
               </div>
               <div class="fv-row mb-7">
-                <label class="required fs-6 fw-semibold mb-2">Code</label>
-                <input type="text" v-model="form.code" class="form-control form-control-solid" />
-              </div>
-              <div class="fv-row mb-7">
                 <label class="required fs-6 fw-semibold mb-2">Commercial Registration</label>
                 <input type="text" v-model="form.commercialRegistration" class="form-control form-control-solid" />
               </div>
@@ -147,7 +143,7 @@ export default {
       citiesApi: new City('api/v1/core/city'),
       areasApi: new Area('api/v1/core/area'),
       items: [], countries: [], cities: [], areas: [], editingId: null,
-      form: { name: '', code: '', commercialRegistration: '', taxCard: '', mobile: '', country_id: '', city_id: '', area_id: '', address: '' }, saving: false, modal: null, skipWatch: false,
+      form: { name: '', commercialRegistration: '', taxCard: '', mobile: '', country_id: '', city_id: '', area_id: '', address: '' }, saving: false, modal: null, skipWatch: false,
     }
   },
   mounted() { this.loadItems(); this.loadCountries(); this.modal = new Modal(this.$refs.modalEl) },
@@ -174,7 +170,7 @@ export default {
     async loadAreas(cityId) { try { const d = await this.areasApi.getAll({ per_page: -1, city_id: cityId }); this.areas = d.data || d } catch {} },
     openForm() {
       this.editingId = null
-      this.form = { name: '', code: '', commercialRegistration: '', taxCard: '', mobile: '', country_id: '', city_id: '', area_id: '', address: '' }
+      this.form = { name: '', commercialRegistration: '', taxCard: '', mobile: '', country_id: '', city_id: '', area_id: '', address: '' }
       this.cities = []; this.areas = []
       this.modal.show()
     },
@@ -182,7 +178,6 @@ export default {
       this.editingId = item.id
       this.skipWatch = true
       this.form.name = item.name
-      this.form.code = item.code || ''
       this.form.commercialRegistration = item.commercialRegistration || ''
       this.form.taxCard = item.taxCard || ''
       this.form.mobile = item.mobile || ''
@@ -199,7 +194,6 @@ export default {
       this.saving = true
       try {
         const fd = new FormData(); fd.append('name', this.form.name); fd.append('area_id', this.form.area_id)
-        if (this.form.code) fd.append('code', this.form.code)
         if (this.form.commercialRegistration) fd.append('commercialRegistration', this.form.commercialRegistration)
         if (this.form.taxCard) fd.append('taxCard', this.form.taxCard)
         if (this.form.mobile) fd.append('mobile', this.form.mobile)

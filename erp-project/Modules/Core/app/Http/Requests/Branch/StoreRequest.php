@@ -13,7 +13,6 @@ class StoreRequest extends FormRequest
     {
         $roles = [
             'name'                   => 'required|string|unique:tenant.branches,name,NULL,id,deleted_at,NULL',
-            'code'                   => 'required|unique:tenant.branches,code,NULL,id,deleted_at,NULL',
             'commercialRegistration' => 'required|unique:tenant.branches,commercialRegistration,NULL,id,deleted_at,NULL',
             'taxCard'                => 'required|unique:tenant.branches,taxCard,NULL,id,deleted_at,NULL',
             'mobile'                 => 'required|unique:tenant.branches,mobile,NULL,id,deleted_at,NULL',
@@ -38,8 +37,6 @@ class StoreRequest extends FormRequest
             'name.required'                   => trans('validation.required'),
             'name.string'                     => trans('validation.string'),
             'name.unique'                     => trans('validation.unique'),
-            'code.required'                   => trans('validation.required'),
-            'code.unique'                     => trans('validation.unique'),
             'commercialRegistration.required' => trans('validation.required'),
             'commercialRegistration.unique'   => trans('validation.unique'),
             'taxCard.required'                => trans('validation.required'),

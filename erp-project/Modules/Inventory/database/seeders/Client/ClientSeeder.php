@@ -18,18 +18,18 @@ class ClientSeeder extends Seeder
 
             $clients = [
                 [
-                    'name' => 'Ahmed Company',
-                    'code' => 'CL-001',
+                    'name'  => 'Ahmed Company',
+                    'code'  => 'CL_0001',
                     'phone' => '01200000001'
                 ],
                 [
-                    'name' => 'Sara Enterprise',
-                    'code' => 'CL-002',
+                    'name'  => 'Sara Enterprise',
+                    'code'  => 'CL_0002',
                     'phone' => '01200000002'
                 ],
                 [
-                    'name' => 'Tech Solutions',
-                    'code' => 'CL-003',
+                    'name'  => 'Tech Solutions',
+                    'code'  => 'CL_0003',
                     'phone' => '01200000003'
                 ]
             ];

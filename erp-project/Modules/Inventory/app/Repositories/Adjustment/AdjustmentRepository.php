@@ -15,6 +15,12 @@ use Modules\Inventory\Repositories\ProductWarehouse\ProductWarehouseRepository;
 
 class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
 {
+    public function __construct(
+        private AdjustmentDetailRepository $adjustmentDetailsRepository,
+        private ProductWarehouseRepository $productWarehouseRepository,
+        private WarehouseRepository $warehouseRepository,
+    ) {}
+
     protected function getModel(): \Illuminate\Database\Eloquent\Model
     {
         return new Adjustment();
@@ -35,26 +41,13 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
         return 'Adjustment';
     }
 
-    //return used repositories
-    protected function getAdjustmentDetailsRepository()    {
-        return new AdjustmentDetailRepository();
-    }
-
-    protected function getProductWarehouseRepository()    {
-        return new ProductWarehouseRepository();
-    }
-
-    protected function getWarehouseRepository()    {
-        return new WarehouseRepository();
-    }
-
 
 
     public function show($id, array $with = [])
     {
         $adjustment = $this->getModel()->with(['adjustmentDetails', 'warehouse', 'user'])->findOrFail($id);
 
-        $warehouses = $this->getWarehouseRepository()->getModel()
+        $warehouses = $this->warehouseRepository->getModel()
             ->whereNull('deleted_at')->get();
 
         $details = [];
@@ -63,7 +56,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
             $unit    = $product && $product->unit ? $product->unit->ShortName : null;
 
             // Get current stock from product_warehouse for this warehouse
-            $pw = $this->getProductWarehouseRepository()->getModel()
+            $pw = $this->productWarehouseRepository->getModel()
                 ->whereNull('deleted_at')
                 ->where('warehouse_id', $adjustment->warehouse_id)
                 ->where('product_id', $detail->product_id);
@@ -139,7 +132,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
             DB::beginTransaction();
 
             $adjustment = $this->getModel()->findOrFail($id);
-            $oldDetails = $this->getAdjustmentDetailsRepository()->getModel()->where('adjustment_id', $id)->get();
+            $oldDetails = $this->adjustmentDetailsRepository->getModel()->where('adjustment_id', $id)->get();
 
             $newDetails = $request['details'];
             $length     = sizeof($newDetails);
@@ -187,10 +180,9 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
 
                 if (empty($productDetail['id']) || $productDetail['id'] < 0 ||
                     !in_array($productDetail['id'], $oldDetailIds)) {
-                    $this->getAdjustmentDetailsRepository()->getModel()->create($detailData);
+                    $this->adjustmentDetailsRepository->getModel()->create($detailData);
                 } else {
-                    $this->getAdjustmentDetailsRepository()->getModel()
-                        ->where('id', $productDetail['id'])->update($detailData);
+                    $this->adjustmentDetailsRepository->getModel()->where('id', $productDetail['id'])->update($detailData);
                 }
             }
 
@@ -223,7 +215,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
             DB::beginTransaction();
 
             $adjustment = $this->getModel()->findOrFail($id);
-            $oldDetails = $this->getAdjustmentDetailsRepository()->getModel()->where('adjustment_id', $id)->get();
+            $oldDetails = $this->adjustmentDetailsRepository->getModel()->where('adjustment_id', $id)->get();
 
             // Reverse quantity changes before deleting
             foreach ($oldDetails as $oldDetail) {
@@ -235,7 +227,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
             }
 
             // Delete adjustment details
-            $this->getAdjustmentDetailsRepository()->getModel()->where('adjustment_id', $id)->delete();
+            $this->adjustmentDetailsRepository->getModel()->where('adjustment_id', $id)->delete();
 
             // Soft delete the adjustment
             $adjustment->delete();
@@ -277,7 +269,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
                     $this->subInProductWarehouse($adjustment, $value);
                 }
             }
-            $this->getAdjustmentDetailsRepository()->getModel()->insert($adjustmentDetails);
+            $this->adjustmentDetailsRepository->getModel()->insert($adjustmentDetails);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -288,7 +280,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
     private function addInProductWarehouse($adjustment, $value)
     {
         if (isset($value['product_variant_id']) && $value['product_variant_id'] !== null) {
-            $productWarehouse = $this->getProductWarehouseRepository()->getModel()
+            $productWarehouse = $this->productWarehouseRepository->getModel()
             ->whereNull('deleted_at')
             ->where('warehouse_id', $adjustment->warehouse_id)
             ->where('product_id', $value['product_id'])
@@ -300,7 +292,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
                 $productWarehouse->save();
             }
         } else {
-            $productWarehouse = $this->getProductWarehouseRepository()->getModel()
+            $productWarehouse = $this->productWarehouseRepository->getModel()
             ->whereNull('deleted_at')
             ->where('warehouse_id', $adjustment->warehouse_id)
             ->where('product_id', $value['product_id'])
@@ -318,7 +310,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
     private function subInProductWarehouse($adjustment, $value)
     {
         if (isset($value['product_variant_id']) && $value['product_variant_id'] !== null) {
-            $productWarehouse = $this->getProductWarehouseRepository()->getModel()
+            $productWarehouse = $this->productWarehouseRepository->getModel()
             ->whereNull('deleted_at')
             ->where('warehouse_id', $adjustment->warehouse_id)
             ->where('product_id', $value['product_id'])
@@ -331,7 +323,7 @@ class AdjustmentRepository extends BaseRepository implements AdjustmentInterface
             }
 
         } else {
-            $productWarehouse = $this->getProductWarehouseRepository()->getModel()
+            $productWarehouse = $this->productWarehouseRepository->getModel()
             ->whereNull('deleted_at')
             ->where('warehouse_id', $adjustment->warehouse_id)
             ->where('product_id', $value['product_id'])

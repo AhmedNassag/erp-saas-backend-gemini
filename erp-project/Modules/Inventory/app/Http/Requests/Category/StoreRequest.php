@@ -11,7 +11,6 @@ class StoreRequest extends FormRequest
     {
         $roles = [
             'name'        => 'required|string|unique:tenant.categories,name,NULL,id,deleted_at,NULL',
-            'code'        => 'required|unique:tenant.categories,code,NULL,id,deleted_at,NULL',
             'is_main'     => 'nullable|boolean',
             'category_id' => [
                 Rule::requiredIf(function () {
@@ -33,8 +32,6 @@ class StoreRequest extends FormRequest
             'name.required'        => trans('validation.required'),
             'name.string'          => trans('validation.string'),
             'name.unique'          => trans('validation.unique'),
-            'code.required'        => trans('validation.required'),
-            'code.unique'          => trans('validation.unique'),
             'is_main.boolean'      => trans('validation.boolean'),
             'category_id.required' => trans('validation.required'),
             'category_id.exists'   => trans('validation.exists'),

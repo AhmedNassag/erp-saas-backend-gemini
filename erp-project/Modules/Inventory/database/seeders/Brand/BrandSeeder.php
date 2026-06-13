@@ -14,11 +14,26 @@ class BrandSeeder extends Seeder
 
         try {
             $brands = [
-                ['name' => 'Samsung',  'code' => 'BR-001'],
-                ['name' => 'Apple',    'code' => 'BR-002'],
-                ['name' => 'LG',       'code' => 'BR-003'],
-                ['name' => 'Sony',     'code' => 'BR-004'],
-                ['name' => 'HP',       'code' => 'BR-005'],
+                [
+                    'name' => 'Samsung',
+                    'code' => 'BR_0001'
+                ],
+                [
+                    'name' => 'Apple',
+                    'code' => 'BR_0002'
+                ],
+                [
+                    'name' => 'LG',
+                    'code' => 'BR_0003'
+                ],
+                [
+                    'name' => 'Sony',
+                    'code' => 'BR_0004'
+                ],
+                [
+                    'name' => 'HP',
+                    'code' => 'BR_0005'
+                ],
             ];
 
             foreach ($brands as $brand) {

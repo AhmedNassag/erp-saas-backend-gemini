@@ -71,10 +71,6 @@
                 <input type="text" v-model="form.name" class="form-control form-control-solid" required />
               </div>
               <div class="fv-row mb-7">
-                <label class="required fs-6 fw-semibold mb-2">Code</label>
-                <input type="text" v-model="form.code" class="form-control form-control-solid" required />
-              </div>
-              <div class="fv-row mb-7">
                 <label class="required fs-6 fw-semibold mb-2">Phone</label>
                 <input type="number" v-model="form.phone" class="form-control form-control-solid" required />
               </div>
@@ -135,7 +131,7 @@ export default {
       citiesApi: new City('api/v1/core/city'),
       areasApi: new Area('api/v1/core/area'),
       items: [], countries: [], cities: [], areas: [], editingId: null,
-      form: { name: '', code: '', phone: '', country_id: '', city_id: '', area_id: '', address: '' }, saving: false, modal: null, skipWatch: false,
+      form: { name: '', phone: '', country_id: '', city_id: '', area_id: '', address: '' }, saving: false, modal: null, skipWatch: false,
     }
   },
   mounted() { this.loadItems(); this.loadCountries(); this.modal = new Modal(this.$refs.modalEl) },
@@ -162,7 +158,7 @@ export default {
     async loadAreas(cityId) { try { const d = await this.areasApi.getAll({ per_page: -1, city_id: cityId }); this.areas = d.data || d } catch {} },
     openForm() {
       this.editingId = null
-      this.form = { name: '', code: '', phone: '', country_id: '', city_id: '', area_id: '', address: '' }
+      this.form = { name: '', phone: '', country_id: '', city_id: '', area_id: '', address: '' }
       this.cities = []; this.areas = []
       this.modal.show()
     },
@@ -170,7 +166,6 @@ export default {
       this.editingId = item.id
       this.skipWatch = true
       this.form.name = item.name
-      this.form.code = item.code || ''
       this.form.phone = item.phone || ''
       this.form.address = item.address || ''
       this.form.country_id = item.country_id || ''
@@ -186,7 +181,6 @@ export default {
       try {
         const fd = new FormData()
         fd.append('name', this.form.name)
-        fd.append('code', this.form.code)
         fd.append('phone', this.form.phone)
         fd.append('area_id', this.form.area_id)
         if (this.form.address) fd.append('address', this.form.address)

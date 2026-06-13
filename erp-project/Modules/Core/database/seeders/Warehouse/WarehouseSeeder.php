@@ -21,13 +21,13 @@ class WarehouseSeeder extends Seeder
             $warehouses = [
                 [
                     'name'    => 'Main Warehouse',
-                    'code'    => 'WH-001',
+                    'code'    => 'WH_0001',
                     'mobile'  => '01100000001',
                     'is_main' => true
                 ],
                 [
                     'name'    => 'Secondary Warehouse',
-                    'code'    => 'WH-002',
+                    'code'    => 'WH_0002',
                     'mobile'  => '01100000002',
                     'is_main' => false
                 ],

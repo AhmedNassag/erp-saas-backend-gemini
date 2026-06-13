@@ -10,7 +10,6 @@ class UpdateRequest extends FormRequest
     {
         $roles = [
             'name'     => 'required|string|unique:tenant.brands,name,'.$this->id.',id,deleted_at,NULL',
-            'code'     => 'required|unique:tenant.brands,code,'.$this->id.',id,deleted_at,NULL',
             'image'    => 'nullable|file|image|mimes:png,jpg,jpeg|max:5000',
             'images.*' => 'nullable|file|image|mimes:png,jpg,jpeg|max:5000',
         ];
@@ -24,8 +23,6 @@ class UpdateRequest extends FormRequest
             'name.required'     => trans('validation.required'),
             'name.string'       => trans('validation.string'),
             'name.unique'       => trans('validation.unique'),
-            'code.required'     => trans('validation.required'),
-            'code.unique'       => trans('validation.unique'),
             'image.nullable'    => trans('validation.nullable'),
             'image.file'        => trans('validation.file'),
             'image.image'       => trans('validation.image'),

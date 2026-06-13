@@ -69,10 +69,6 @@
                 <input type="text" v-model="form.name" class="form-control form-control-solid" required />
               </div>
               <div class="fv-row mb-7">
-                <label class="required fs-6 fw-semibold mb-2">Code</label>
-                <input type="text" v-model="form.code" class="form-control form-control-solid" required />
-              </div>
-              <div class="fv-row mb-7">
                 <div class="form-check form-switch form-check-custom form-check-solid">
                   <label class="form-check-label fs-6 fw-semibold me-3">Main Category</label>
                   <input type="checkbox" v-model="form.is_main" class="form-check-input" @change="onIsMainChange" />
@@ -111,7 +107,7 @@ export default {
     return {
       api: new Category('api/v1/inventory/category'),
       items: [], parentCategories: [], editingId: null,
-      form: { name: '', code: '', is_main: false, category_id: '' }, saving: false, modal: null,
+      form: { name: '', is_main: false, category_id: '' }, saving: false, modal: null,
     }
   },
   mounted() { this.loadItems(); this.loadParents(); this.modal = new Modal(this.$refs.modalEl) },
@@ -123,13 +119,12 @@ export default {
     },
     openForm() {
       this.editingId = null
-      this.form = { name: '', code: '', is_main: false, category_id: '' }
+      this.form = { name: '', is_main: false, category_id: '' }
       this.modal.show()
     },
     async editItem(item) {
       this.editingId = item.id
       this.form.name = item.name
-      this.form.code = item.code || ''
       this.form.is_main = !!item.is_main
       this.form.category_id = item.category_id || ''
       this.modal.show()
@@ -139,7 +134,6 @@ export default {
       try {
         const fd = new FormData()
         fd.append('name', this.form.name)
-        fd.append('code', this.form.code)
         fd.append('is_main', this.form.is_main ? '1' : '0')
         if (!this.form.is_main) { fd.append('category_id', this.form.category_id) }
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)

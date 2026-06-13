@@ -19,14 +19,14 @@ class BranchSeeder extends Seeder
             $branches = [
                 [
                     'name'                   => 'Main Branch',
-                    'code'                   => 'BR-001',
+                    'code'                   => 'BR_0001',
                     'commercialRegistration' => 'CR-001',
                     'taxCard'                => 'TX-001',
                     'mobile'                 => '01000000001'
                 ],
                 [
                     'name'                   => 'Second Branch',
-                    'code'                   => 'BR-002',
+                    'code'                   => 'BR_0002',
                     'commercialRegistration' => 'CR-002',
                     'taxCard'                => 'TX-002',
                     'mobile'                 => '01000000002'

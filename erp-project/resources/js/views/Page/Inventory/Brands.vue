@@ -66,10 +66,6 @@
                 <input type="text" v-model="form.name" class="form-control form-control-solid" required />
               </div>
               <div class="fv-row mb-7">
-                <label class="required fs-6 fw-semibold mb-2">Code</label>
-                <input type="text" v-model="form.code" class="form-control form-control-solid" required />
-              </div>
-              <div class="fv-row mb-7">
                 <label class="fs-6 fw-semibold mb-2">Image</label>
                 <div v-if="form.imagePreview" class="mb-3">
                   <img :src="form.imagePreview" class="rounded border" style="max-width:150px;max-height:150px;object-fit:cover" />
@@ -102,7 +98,7 @@ export default {
     return {
       api: new Brand('api/v1/inventory/brand'),
       items: [], editingId: null,
-      form: { name: '', code: '', imagePreview: null, imageFile: null }, saving: false, modal: null,
+      form: { name: '', imagePreview: null, imageFile: null }, saving: false, modal: null,
     }
   },
   mounted() { this.loadItems(); this.modal = new Modal(this.$refs.modalEl) },
@@ -120,7 +116,6 @@ export default {
     async editItem(item) {
       this.editingId = item.id
       this.form.name = item.name
-      this.form.code = item.code || ''
       this.form.imagePreview = item.image || null
       this.form.imageFile = null
       this.resetFileInputs()
@@ -138,7 +133,6 @@ export default {
       try {
         const fd = new FormData()
         fd.append('name', this.form.name)
-        fd.append('code', this.form.code)
         if (this.form.imageFile) { fd.append('image', this.form.imageFile) }
         if (this.editingId) await this.api.update(this.editingId, fd); else await this.api.insert(fd)
         notify({ text: this.editingId ? 'Brand updated' : 'Brand created', type: 'success' })

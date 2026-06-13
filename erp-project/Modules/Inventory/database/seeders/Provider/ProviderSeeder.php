@@ -19,17 +19,17 @@ class ProviderSeeder extends Seeder
             $providers = [
                 [
                     'name'  => 'Global Supplies',
-                    'code'  => 'PR-001',
+                    'code'  => 'PR_0001',
                     'phone' => '01110000001'
                 ],
                 [
                     'name'  => 'Egyptian Trading',
-                    'code'  => 'PR-002',
+                    'code'  => 'PR_0002',
                     'phone' => '01110000002'
                 ],
                 [
                     'name'  => 'Prime Materials',
-                    'code'  => 'PR-003',
+                    'code'  => 'PR_0003',
                     'phone' => '01110000003'
                 ]
             ];
