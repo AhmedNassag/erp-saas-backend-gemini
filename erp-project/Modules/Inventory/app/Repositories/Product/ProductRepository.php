@@ -18,6 +18,12 @@ class ProductRepository extends BaseRepository implements ProductInterface
 {
     use ImageTrait;
 
+    public function __construct(
+        private WarehouseRepository $warehouseRepository,
+        private ProductVariantRepository $productVariantRepository,
+        private ProductWarehouseRepository $productWarehouseRepository
+    ) {}
+
     protected function getModel(): \Illuminate\Database\Eloquent\Model
     {
         return new Product();
@@ -36,19 +42,6 @@ class ProductRepository extends BaseRepository implements ProductInterface
     protected function getSingularName(): string
     {
         return 'Product';
-    }
-
-    //return used repositories
-    protected function getWarehouseRepository()    {
-        return new WarehouseRepository();
-    }
-
-    protected function getProductVariantRepository()    {
-        return new ProductVariantRepository();
-    }
-
-    protected function getProductWarehouseRepository()    {
-        return new ProductWarehouseRepository();
     }
 
 
@@ -118,10 +111,8 @@ class ProductRepository extends BaseRepository implements ProductInterface
             // Store Variants Product
             $isVariant = $request->input('is_variant') === 'true' || $request->input('is_variant') === true || $request->input('is_variant') == 1;
             if ($isVariant && $request->has('variants')) {
-                // $oldVariants = ProductVariant::where('product_id', $id)->whereNull('deleted_at')->get();
-                $oldVariants = $this->getProductVariantRepository()->getModel()->where('product_id', $id)->whereNull('deleted_at')->get();
-                // $warehouses  = Warehouse::whereNull('deleted_at')->pluck('id')->toArray();
-                $warehouses  = $this->getWarehouseRepository()->getModel()->whereNull('deleted_at')->pluck('id')->toArray();
+                $oldVariants = $this->productVariantRepository->getModel()->where('product_id', $id)->whereNull('deleted_at')->get();
+                $warehouses  = $this->warehouseRepository->getModel()->whereNull('deleted_at')->pluck('id')->toArray();
 
                 if ($oldVariants->isNotEmpty()) {
                     $newVariants_id = [];
@@ -137,19 +128,16 @@ class ProductRepository extends BaseRepository implements ProductInterface
                         $oldVariants_id[] = $value->id;
                         // Delete Variant
                         if (!in_array($oldVariants_id[$key], $newVariants_id)) {
-                            // $productVariant             = ProductVariant::findOrFail($value->id);
-                            $productVariant             = $this->getProductVariantRepository()->getModel()->findOrFail($value->id);
+                            $productVariant             = $this->productVariantRepository->getModel()->findOrFail($value->id);
                             $productVariant->deleted_at = Carbon::now();
                             $productVariant->save();
 
-                            // $productWarehouse = ProductWarehouse::where('product_variant_id', $value->id)->update(['deleted_at' => Carbon::now()]);
-                            $productWarehouse = $this->getProductWarehouseRepository()->getModel()->where('product_variant_id', $value->id)->update(['deleted_at' => Carbon::now()]);
+                            $productWarehouse = $this->productWarehouseRepository->getModel()->where('product_variant_id', $value->id)->update(['deleted_at' => Carbon::now()]);
                         }
                     }
                     foreach ($request['variants'] as $key => $variant) {
                         if (array_key_exists($var, $variant)) {
-                            // $productVariantData = new ProductVariant;
-                            $productVariantData = $this->getProductVariantRepository()->getModel();
+                            $productVariantData = $this->productVariantRepository->getModel();
                             //-- Field Required
                             $productVariantData->product_id     = $variant['product_id'];
                             $productVariantData->name           = $variant['text'];
@@ -159,8 +147,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
                             $productVariantUpdate['qty']        = $variant['qty'];
 
                         } else {
-                            // $productVariantData = new ProductVariant;
-                            $productVariantData = $this->getProductVariantRepository()->getModel();
+                            $productVariantData = $this->productVariantRepository->getModel();
                             //-- Field Required
                             $productVariantData->product_id     = $id;
                             $productVariantData->name           = $variant['text'];
@@ -183,21 +170,17 @@ class ProductRepository extends BaseRepository implements ProductInterface
                                     ];
 
                                 }
-                                // ProductWarehouse::insert($productWarehouse);
-                                $this->getProductWarehouseRepository()->getModel()->insert($productWarehouse);
+                                $this->productWarehouseRepository->getModel()->insert($productWarehouse);
                             }
                         } else {
-                            // ProductVariant::where('id', $variant['id'])->update($productVariantUpdate);
-                            $this->getProductVariantRepository()->getModel()->where('id', $variant['id'])->update($productVariantUpdate);
+                            $this->productVariantRepository->getModel()->where('id', $variant['id'])->update($productVariantUpdate);
                         }
                     }
                 } else {
-                    // $producttWarehouse = ProductWarehouse::where('product_id', $id)->update(['deleted_at' => Carbon::now()]);
-                    $this->getProductWarehouseRepository()->getModel()->where('product_id', $id)->update(['deleted_at' => Carbon::now()]);
+                    $this->productWarehouseRepository->getModel()->where('product_id', $id)->update(['deleted_at' => Carbon::now()]);
                     foreach ($request['variants'] as $variant) {
                         $productWarehouseData = [];
-                        // $productVariantData   = new ProductVariant;
-                        $productVariantData   = $this->getProductVariantRepository()->getModel();
+                        $productVariantData   = $this->productVariantRepository->getModel();
                         //-- Field Required
                         $productVariantData->product_id = $id;
                         $productVariantData->name       = $variant['text'];
@@ -211,8 +194,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
                                     'product_variant_id' => $productVariantData->id,
                                 ];
                             }
-                            // ProductWarehouse::insert($productWarehouseData);
-                            $this->getProductWarehouseRepository()->getModel()->insert($productWarehouseData);
+                            $this->productWarehouseRepository->getModel()->insert($productWarehouseData);
                         }
                     }
                 }
@@ -220,13 +202,11 @@ class ProductRepository extends BaseRepository implements ProductInterface
             } else {
                 if ($oldVariants->isNotEmpty()) {
                     foreach ($oldVariants as $oldVariant) {
-                        // $varOld = ProductVariant::where('product_id', $oldVariant['product_id'])->whereNull('deleted_at')->first();
-                        $varOld = $this->getProductVariantRepository()->getModel()->where('product_id', $oldVariant['product_id'])->whereNull('deleted_at')->first();
+                        $varOld = $this->productVariantRepository->getModel()->where('product_id', $oldVariant['product_id'])->whereNull('deleted_at')->first();
                         $varOld->deleted_at = Carbon::now();
                         $varOld->save();
 
-                        // $producttWarehouse = ProductWarehouse::where('product_variant_id', $oldVariant['id'])->update(['deleted_at' => Carbon::now()]);
-                        $this->getProductWarehouseRepository()->getModel()->where('product_variant_id', $oldVariant['id'])->update(['deleted_at' => Carbon::now()]);
+                        $this->productWarehouseRepository->getModel()->where('product_variant_id', $oldVariant['id'])->update(['deleted_at' => Carbon::now()]);
                     }
                     if ($warehouses) {
                         foreach ($warehouses as $warehouse) {
@@ -236,8 +216,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
                                 'product_variant_id' => null,
                             ];
                         }
-                        // ProductWarehouse::insert($productWarehouse);
-                        $this->getProductWarehouseRepository()->getModel()->insert($productWarehouse);
+                        $this->productWarehouseRepository->getModel()->insert($productWarehouse);
                     }
                 }
             }
@@ -328,22 +307,19 @@ class ProductRepository extends BaseRepository implements ProductInterface
                 'name'       => is_array($variant) ? $variant['text'] : $variant,
             ];
         }
-        // ProductVariant::insert($productVariantsData);
-        $this->getProductVariantRepository()->getModel()->insert($productVariantsData);
+        $this->productVariantRepository->getModel()->insert($productVariantsData);
     }
 
 
 
     protected function storeProductWarehouse($request, $product)
     {
-        // $warehouses = Warehouse::whereNull('deleted_at')->pluck('id')->toArray();
-        $warehouses = $this->getWarehouseRepository()->getModel()->whereNull('deleted_at')->pluck('id')->toArray();
+        $warehouses = $this->warehouseRepository->getModel()->whereNull('deleted_at')->pluck('id')->toArray();
         if ($warehouses) {
             $isVariant = $request->input('is_variant') === 'true' || $request->input('is_variant') === true || $request->input('is_variant') == 1;
             foreach ($warehouses as $warehouse) {
                 if ($isVariant) {
-                    // $productVariants = ProductVariant::where('product_id', $product->id)->whereNull('deleted_at')->get();
-                    $productVariants = $this->getProductVariantRepository()->getModel()->where('product_id', $product->id)->whereNull('deleted_at')->get();
+                    $productVariants = $this->productVariantRepository->getModel()->where('product_id', $product->id)->whereNull('deleted_at')->get();
                     foreach ($productVariants as $productVariant) {
                         $productWarehouse[] = [
                             'product_id'         => $product->id,
@@ -358,8 +334,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
                     ];
                 }
             }
-            // ProductWarehouse::insert($productWarehouse);
-            $this->getProductWarehouseRepository()->getModel()->insert($productWarehouse);
+            $this->productWarehouseRepository->getModel()->insert($productWarehouse);
         }
     }
 
@@ -367,8 +342,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
 
     protected function destroyProductVariants($productId)
     {
-        // $productVariants = ProductVariant::where('product_id', $productId)->whereNull('deleted_at')->get();
-        $productVariants = $this->getProductVariantRepository()->getModel()->where('product_id', $productId)->whereNull('deleted_at')->get();
+        $productVariants = $this->productVariantRepository->getModel()->where('product_id', $productId)->whereNull('deleted_at')->get();
         foreach ($productVariants as $productVariant) {
             $productVariant->deleted_at = Carbon::now();
             $productVariant->save();
@@ -378,8 +352,7 @@ class ProductRepository extends BaseRepository implements ProductInterface
 
     protected function destroyProductWarehouse($productId)
     {
-        // ProductWarehouse::where('product_id', $productId)->whereNull('deleted_at')->update(['deleted_at' => Carbon::now()]);
-        $this->getProductWarehouseRepository()->getModel()->where('product_id', $productId)->whereNull('deleted_at')->update(['deleted_at' => Carbon::now()]);
+        $this->productWarehouseRepository->getModel()->where('product_id', $productId)->whereNull('deleted_at')->update(['deleted_at' => Carbon::now()]);
     }
 
     public function show($id, array $with = [])
@@ -423,22 +396,9 @@ class ProductRepository extends BaseRepository implements ProductInterface
 
     public function getProductsByWarehouseId($warehouseId)
     {
-        // $productIds = ProductWarehouse::where('warehouse_id', $warehouseId)
-        //     ->whereNull('deleted_at')
-        //     ->pluck('product_id')
-        //     ->unique();
-
-        // return Product::whereIn('id', $productIds)
-        //     ->whereNull('deleted_at')
-        //     ->where('status', 1)
-        //     ->select('id', 'code', 'Type_barcode', 'name')
-        //     ->get();
-
-        
         $data = [];
         
-        // $productWarehouseData = ProductWarehouse::with('warehouse', 'product', 'productVariant')->where('warehouse_id', $warehouseId)->where('deleted_at', '=', null)->get();
-        $productWarehouseData = $this->getProductWarehouseRepository()->getModel()->with('warehouse', 'product', 'productVariant')->where('warehouse_id', $warehouseId)->where('deleted_at', '=', null)->get();
+        $productWarehouseData = $this->productWarehouseRepository->getModel()->with('warehouse', 'product', 'productVariant')->where('warehouse_id', $warehouseId)->where('deleted_at', '=', null)->get();
         
         foreach ($productWarehouseData as $productWarehouse) {
 
